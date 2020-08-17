@@ -72,6 +72,12 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 
+#include "nrf_drv_clock.h"
+#include "iic_transfer_handler.h"
+#include "AFE_connect.h"
+#include "MC36XX.h"
+#include "data_storage.h"
+
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
 #define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
@@ -190,7 +196,6 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
-        uint32_t err_code;
 
         NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
         NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
@@ -524,13 +529,13 @@ static void buttons_leds_init(bool * p_erase_bonds)
 {
     bsp_event_t startup_event;
 
-    uint32_t err_code = bsp_init(BSP_INIT_LEDS | BSP_INIT_BUTTONS, bsp_event_handler);
+    uint32_t err_code = bsp_init(BSP_INIT_LEDS, bsp_event_handler);
     APP_ERROR_CHECK(err_code);
 
-    err_code = bsp_btn_ble_init(NULL, &startup_event);
-    APP_ERROR_CHECK(err_code);
+//    err_code = bsp_btn_ble_init(NULL, &startup_event);
+//    APP_ERROR_CHECK(err_code);
 
-    *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
+//    *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
 }
 
 
@@ -576,6 +581,14 @@ static void advertising_start(void)
     APP_ERROR_CHECK(err_code);
 }
 
+static void lfclk_config(void)
+{
+    ret_code_t err_code = nrf_drv_clock_init();
+    APP_ERROR_CHECK(err_code);
+
+    nrf_drv_clock_lfclk_request(NULL);
+}
+
 
 /**@brief Application main function.
  */
@@ -584,6 +597,7 @@ int main(void)
     bool erase_bonds;
 
     // Initialize.
+		lfclk_config();
     log_init();
     timers_init();
     buttons_leds_init(&erase_bonds);
@@ -594,10 +608,32 @@ int main(void)
     services_init();
     advertising_init();
     conn_params_init();
+	
+		sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
 
     // Start execution.
     NRF_LOG_INFO("Debug logging for UART over RTT started.");
     advertising_start();
+	
+		twi_init();
+		NRF_LOG_INFO("TWI_OK");
+		
+    AFEinit();
+		NRF_LOG_INFO("AFE_OK");
+		
+    MC36XXstart();
+		NRF_LOG_INFO("ACC_OK");
+		
+    //saadc_init();
+		//NRF_LOG_INFO("SAADC_OK");
+		
+		fds_prepare();
+		NRF_LOG_INFO("FDS_OK");
+		
+    nand_flash_prepare();
+		NRF_LOG_INFO("NAND_OK");
+		
+		
 
     // Enter main loop.
     for (;;)
