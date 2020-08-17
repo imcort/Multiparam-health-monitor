@@ -58,6 +58,8 @@ extern fds_record_desc_t flash_offset_desc;
 extern fds_record_desc_t flash_read_desc;
 extern fds_record_desc_t flash_badblock_desc;
 
+ret_code_t ble_data_send(uint8_t* sendbuf, uint16_t llength);
+
 static void m_millis_timer_handler(void *p_context)
 {
     millis++;
@@ -188,8 +190,8 @@ void timers_start(void)
     err_code = app_timer_start(slowACQ_timer, APP_TIMER_TICKS(1000), NULL); 	//1Hz Bodytemp, Battery
     APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
-    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
+//    APP_ERROR_CHECK(err_code);
 }
 
 static void saadc_callback(nrf_drv_saadc_evt_t const *p_event)
@@ -227,7 +229,7 @@ int16_t rt_send_buffer[122];
 int16_t flash_write_buffer[120];
 uint8_t flash_read_buffer[194];
 
-bool ble_rt_send(void)
+void ble_rt_send(void)
 {
 		static int ble_rt_send_offset = 0;
     ret_code_t ret = nrf_queue_pop(&rt_ecg_queue, &rt_send_buffer[ble_rt_send_offset * 6]);
@@ -246,11 +248,9 @@ bool ble_rt_send(void)
     {
         rt_send_buffer[120] = spo2;
         rt_send_buffer[121] = bodytemp;
-			
+				ble_data_send((uint8_t*)rt_send_buffer, 244);
         ble_rt_send_offset = 0;
-				return true;
     }
-		return false;
 }
 
 void nand_flash_data_write(void)
@@ -306,7 +306,7 @@ void nand_flash_data_write(void)
             }
 
             errid = nand_spi_flash_page_write((flash_offset.block << 6) | flash_offset.page, flash_offset.column, (uint8_t *)flash_write_buffer, 240);
-            //NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 240, nand_spi_flash_str_error(errid));
+            NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 240, nand_spi_flash_str_error(errid));
             flash_offset.column += 240;
             flash_write_data_offset = 0;
         }
@@ -324,7 +324,7 @@ void nand_flash_data_write(void)
 					
             //*(uint32_t *)&flash_write_buffer[70] = millis;  //4221-4224
             errid = nand_spi_flash_page_write((flash_offset.block << 6) | flash_offset.page, flash_offset.column, (uint8_t *)flash_write_buffer, 132);
-            //NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 144, nand_spi_flash_str_error(errid));
+            NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 144, nand_spi_flash_str_error(errid));
             flash_offset.column = 0;
             flash_write_data_offset = 0;
             flash_offset.page++;
@@ -365,9 +365,9 @@ void nand_flash_data_write(void)
 #define NAND_ADDR(BLOCKADDR, PAGEADDR) ((((uint32_t)BLOCKADDR) << 6) | PAGEADDR)
 bool is_read = false;
 
-bool nand_flash_data_read(void)
+void nand_flash_data_read(void)
 {
-		bool ret_flag = false;
+		//bool ret_flag = false;
     int errid = 0;
     ret_code_t ret;
     if ((NAND_ADDR(flash_read.block, flash_read.page) < NAND_ADDR(flash_offset.block, flash_offset.page)))
@@ -380,11 +380,12 @@ bool nand_flash_data_read(void)
         }
 
         *(int16_t*)flash_read_buffer = flash_read.column / 192;
-				ret_flag = true;
+				ret = ble_data_send(flash_read_buffer, 194);
+				//ret_flag = true;
 				
         if (ret == NRF_SUCCESS)
         {
-            //NRF_LOG_INFO("send success block %d, page %d, column %d, size %d, %s", flash_read.block, flash_read.page, flash_read.column, 192, nand_spi_flash_str_error(errid));
+            NRF_LOG_INFO("send success block %d, page %d, column %d, size %d, %s", flash_read.block, flash_read.page, flash_read.column, 192, nand_spi_flash_str_error(errid));
             is_read = false;
             flash_read.column += 192;
             if (flash_read.column == 4224)
@@ -425,5 +426,5 @@ bool nand_flash_data_read(void)
             }
         }
     }
-		return ret_flag;
+		//return ret_flag;
 }

@@ -6,8 +6,8 @@
 void saadc_init(void);
 void timers_create(void);
 void timers_start(void);
-bool ble_rt_send(void);
+void ble_rt_send(void);
 void nand_flash_data_write(void);
-bool nand_flash_data_read(void);
+void nand_flash_data_read(void);
 
 #endif
