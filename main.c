@@ -77,6 +77,10 @@
 #include "AFE_connect.h"
 #include "MC36XX.h"
 #include "data_storage.h"
+#include "nrf_drv_saadc.h"
+#include "fds.h"
+#include <math.h>
+#include "data_acquire.h"
 
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
@@ -108,13 +112,27 @@ NRF_BLE_GATT_DEF(m_gatt);                                                       
 NRF_BLE_QWR_DEF(m_qwr);                                                             /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                                 /**< Advertising module instance. */
 
-static uint16_t   m_conn_handle          = BLE_CONN_HANDLE_INVALID;                 /**< Handle of the current connection. */
+uint16_t   m_conn_handle          = BLE_CONN_HANDLE_INVALID;                 /**< Handle of the current connection. */
 static uint16_t   m_ble_nus_max_data_len = BLE_GATT_ATT_MTU_DEFAULT - 3;            /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
 static ble_uuid_t m_adv_uuids[]          =                                          /**< Universally unique service identifier. */
 {
     {BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}
 };
 
+extern bool in_rt_mode;
+extern bool in_flash_send_mode;
+extern bool is_connected;
+
+extern bool flash_write_full;
+
+extern nand_flash_addr_t flash_offset;
+extern nand_flash_addr_t flash_read;
+extern nand_flash_badblocks_t flash_badblocks;
+
+extern int64_t millis;
+
+extern int16_t rt_send_buffer[122];
+extern uint8_t flash_read_buffer[194];
 
 /**@brief Function for assert macro callback.
  *
@@ -193,14 +211,86 @@ static void nrf_qwr_error_handler(uint32_t nrf_error)
 /**@snippet [Handling the data received over BLE] */
 static void nus_data_handler(ble_nus_evt_t * p_evt)
 {
-
-    if (p_evt->type == BLE_NUS_EVT_RX_DATA)
+		if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
+        char sendbuf[100];
+				uint16_t llength;
+			
+				uint32_t time_set;
+			
+				nrf_saadc_value_t saadc_val;
+				float val, val2;
+				fds_stat_t stat;
+			
+        switch (p_evt->params.rx_data.p_data[0])
+        {
+        case 'a':
 
-        NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
-        NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
+            in_rt_mode = true;
 
-       
+            break;
+        case 'b':
+            in_flash_send_mode = true;
+            break;
+        case 'c':
+						
+						fds_stat(&stat);
+						llength = sprintf(sendbuf,
+																			"nand block: %d, page: %d\nread block:%d, page: %d\n fds used: %d\n time:%u",
+																			flash_offset.block, 
+																			flash_offset.page, 
+																			flash_read.block, 
+																			flash_read.page, 
+																			stat.freeable_words,
+																			(uint32_t)(millis / 1000));
+				
+						ble_nus_data_send(&m_nus, (uint8_t *)sendbuf, &llength, m_conn_handle);
+
+            break;
+        case 'd':
+						flash_write_full = true;
+						flash_offset.column = 0;
+						flash_offset.page = 0;
+						flash_offset.block = 0;
+				
+						flash_read.column = 0;
+						flash_read.page = 0;
+						flash_read.block = 0;
+				
+						memset(flash_badblocks.bad_blocks,0,sizeof(flash_badblocks.bad_blocks));
+						flash_badblocks.bad_block_num = 0;
+				
+						flash_write_full = false;
+
+            break;
+				case 'e':
+						nrfx_saadc_sample_convert(1, &saadc_val);
+						val = (float)saadc_val / 4096.0f * 7.2f;
+						llength = sprintf(sendbuf,"Battery Voltages: %.2f", val);
+						ble_nus_data_send(&m_nus, (uint8_t *)sendbuf, &llength, m_conn_handle);
+
+            break;
+				case 'f':
+						nrfx_saadc_sample_convert(0, &saadc_val);
+						val = (float)saadc_val / 4096.0f * 1.8f;
+				    val2 = 8.784e4f * pow(val, -0.3548f) - 4.583e4f;
+						llength = sprintf(sendbuf,"Temp voltages: %.2f, Res: %.2f", val, val2);
+						ble_nus_data_send(&m_nus, (uint8_t *)sendbuf, &llength, m_conn_handle);
+
+            break;
+				
+				case 'g':
+						
+						sscanf((const char *)(p_evt->params.rx_data.p_data) + 1, "%u", &time_set);
+				
+						millis = (int64_t)time_set * 1000;
+				
+						break;
+				
+        default:
+            break;
+        }
+
     }
 
 }
@@ -330,6 +420,19 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     }
 }
 
+static void do_connected(void)
+{
+
+    is_connected = true;
+}
+
+static void do_disconnected(void)
+{
+
+    in_rt_mode = false;
+    in_flash_send_mode = false;
+    is_connected = false;
+}
 
 /**@brief Function for handling BLE events.
  *
@@ -344,6 +447,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     {
         case BLE_GAP_EVT_CONNECTED:
             NRF_LOG_INFO("Connected");
+						do_connected();
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
@@ -353,6 +457,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 
         case BLE_GAP_EVT_DISCONNECTED:
             NRF_LOG_INFO("Disconnected");
+						do_disconnected();
             // LED indication will be changed when advertising starts.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             break;
@@ -595,6 +700,7 @@ static void lfclk_config(void)
 int main(void)
 {
     bool erase_bonds;
+		uint16_t llength;
 
     // Initialize.
 		lfclk_config();
@@ -614,18 +720,18 @@ int main(void)
     // Start execution.
     NRF_LOG_INFO("Debug logging for UART over RTT started.");
     advertising_start();
-	
+
 		twi_init();
 		NRF_LOG_INFO("TWI_OK");
 		
     AFEinit();
 		NRF_LOG_INFO("AFE_OK");
-		
+
     MC36XXstart();
 		NRF_LOG_INFO("ACC_OK");
 		
-    //saadc_init();
-		//NRF_LOG_INFO("SAADC_OK");
+    saadc_init();
+		NRF_LOG_INFO("SAADC_OK");
 		
 		fds_prepare();
 		NRF_LOG_INFO("FDS_OK");
@@ -634,10 +740,33 @@ int main(void)
 		NRF_LOG_INFO("NAND_OK");
 		
 		
+		timers_create();
+		timers_start();
+		
 
     // Enter main loop.
     for (;;)
     {
+				if (is_connected)
+        {
+            if (in_rt_mode && ble_rt_send())
+            {
+                llength = 244;
+								ble_nus_data_send(&m_nus, (uint8_t *)rt_send_buffer, &llength, m_conn_handle);
+            }
+
+            if (in_flash_send_mode && nand_flash_data_read())
+            {
+                llength = 194;
+								ble_nus_data_send(&m_nus, (uint8_t *)flash_read_buffer, &llength, m_conn_handle);
+            }
+        }
+        if (!flash_write_full)
+        {
+
+            nand_flash_data_write();
+					
+        }
         idle_state_handle();
     }
 }

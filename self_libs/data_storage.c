@@ -35,17 +35,7 @@ fds_record_desc_t flash_badblock_desc = {0};
 
 ////////////////////////////////////////////FDS
 
-typedef struct
-{
-
-    uint16_t column;
-    uint16_t page;
-    uint16_t block;
-		uint16_t __not_used_;
-
-} nand_flash_addr_t;
-
-static nand_flash_addr_t flash_offset = {
+nand_flash_addr_t flash_offset = {
 
     .column = 0,
     .page = 0,
@@ -53,7 +43,7 @@ static nand_flash_addr_t flash_offset = {
 
 };
 
-static nand_flash_addr_t flash_read = {
+nand_flash_addr_t flash_read = {
 
     .column = 0,
     .page = 0,
@@ -61,9 +51,13 @@ static nand_flash_addr_t flash_read = {
 
 };
 
-static int16_t nand_flash_bad_blocks[40];
+nand_flash_badblocks_t flash_badblocks = {
+		
+		.bad_block_num = 0
 
-static fds_record_t const m_flash_offset_record = 
+};
+
+fds_record_t const m_flash_offset_record = 
 {
 	.file_id = FLASH_STATUS_FILE_ID,
 	.key = FLASH_OFFSET_KEY,
@@ -71,7 +65,7 @@ static fds_record_t const m_flash_offset_record =
 	.data.length_words = 2
 };
 
-static fds_record_t const m_flash_read_record = 
+fds_record_t const m_flash_read_record = 
 {
 	.file_id = FLASH_STATUS_FILE_ID,
 	.key = FLASH_READ_KEY,
@@ -79,12 +73,12 @@ static fds_record_t const m_flash_read_record =
 	.data.length_words = 2
 };
 
-static fds_record_t const m_flash_bad_block_record = 
+fds_record_t const m_flash_bad_block_record = 
 {
 	.file_id = FLASH_STATUS_FILE_ID,
 	.key = FLASH_BADBLOCK_KEY,
-	.data.p_data = &nand_flash_bad_blocks,
-	.data.length_words = 20
+	.data.p_data = &flash_badblocks,
+	.data.length_words = 22
 };
 
 static void fds_evt_handler(fds_evt_t const *p_evt)
@@ -181,7 +175,7 @@ void nand_spi_delayus(uint32_t delay)
     nrf_delay_us(delay);
 }
 
-void fds_gc_process(){
+void fds_gc_process(void){
 	
 		//gc every pages full
 		m_fds_gc = false;
@@ -194,9 +188,43 @@ void fds_gc_process(){
 		}
 }
 
+void nand_fds_open(void* desc, void* dest, size_t size)
+{
+		ret_code_t ret;
+	
+		fds_flash_record_t temp = {0};
+		ret = fds_record_open(desc, &temp);
+		APP_ERROR_CHECK(ret);
+		memcpy(dest, temp.p_data, size);
+		ret = fds_record_close(desc);
+		APP_ERROR_CHECK(ret);
+
+}
+
+void nand_fds_write(void* desc, const void* src)
+{
+		ret_code_t ret;
+	
+		m_fds_writed = false;
+		ret = fds_record_write(desc, src);
+		APP_ERROR_CHECK(ret);
+		while(!m_fds_writed) nrf_pwr_mgmt_run();
+		
+}
+
+void nand_fds_update(void* desc, const void* src)
+{
+		ret_code_t ret;
+	
+		m_fds_updated = false;
+		ret = fds_record_update(desc, src);
+		APP_ERROR_CHECK(ret);
+		while(!m_fds_updated) nrf_pwr_mgmt_run();
+		
+}
+
 void nand_flash_prepare(void)
 {
-
     int errid;
 		ret_code_t ret;
 
@@ -218,22 +246,12 @@ void nand_flash_prepare(void)
 		{
 		
 			NRF_LOG_INFO("FDS found flash offset, reading it");
-			fds_flash_record_t temp = {0};
-			ret = fds_record_open(&flash_offset_desc, &temp);
-			APP_ERROR_CHECK(ret);
-			memcpy(&flash_offset, temp.p_data, sizeof(flash_offset));
-			ret = fds_record_close(&flash_offset_desc);
-			APP_ERROR_CHECK(ret);
+			nand_fds_open(&flash_offset_desc, &flash_offset, sizeof(flash_offset));
 			
 		} else {
 			
 			NRF_LOG_INFO("FDS flash offset not found. writing");
-			m_fds_writed = false;
-			ret = fds_record_write(&flash_offset_desc, &m_flash_offset_record);
-			NRF_LOG_INFO("FDS flash error:%d", ret);
-			//FDS_ERR_INVALID_ARG
-			APP_ERROR_CHECK(ret);
-			while(!m_fds_writed) nrf_pwr_mgmt_run();
+			nand_fds_write(&flash_offset_desc, &m_flash_offset_record);
 			NRF_LOG_INFO("FDS flash offset writed.");
 		
 		}
@@ -246,22 +264,12 @@ void nand_flash_prepare(void)
 		{
 		
 			NRF_LOG_INFO("FDS found flash read, reading it");
-			fds_flash_record_t temp = {0};
-			ret = fds_record_open(&flash_read_desc, &temp);
-			APP_ERROR_CHECK(ret);
-			memcpy(&flash_read, temp.p_data, sizeof(flash_read));
-			ret = fds_record_close(&flash_read_desc);
-			APP_ERROR_CHECK(ret);
+			nand_fds_open(&flash_read_desc, &flash_read, sizeof(flash_read));
 			
 		} else {
 			
 			NRF_LOG_INFO("FDS flash read not found. writing");
-			m_fds_writed = false;
-			ret = fds_record_write(&flash_read_desc, &m_flash_read_record);
-			NRF_LOG_INFO("FDS flash error:%d", ret);
-			//FDS_ERR_INVALID_ARG
-			APP_ERROR_CHECK(ret);
-			while(!m_fds_writed) nrf_pwr_mgmt_run();
+			nand_fds_write(&flash_read_desc, &m_flash_read_record);
 			NRF_LOG_INFO("FDS flash read writed.");
 		
 		}
@@ -274,25 +282,30 @@ void nand_flash_prepare(void)
 		{
 		
 			NRF_LOG_INFO("FDS found flash badblock, reading it");
-			fds_flash_record_t temp = {0};
-			ret = fds_record_open(&flash_badblock_desc, &temp);
-			APP_ERROR_CHECK(ret);
-			memcpy(&nand_flash_bad_blocks, temp.p_data, sizeof(nand_flash_bad_blocks));
-			ret = fds_record_close(&flash_badblock_desc);
-			APP_ERROR_CHECK(ret);
+			nand_fds_open(&flash_badblock_desc, &flash_badblocks, sizeof(flash_badblocks));
 			
 		} else {
 			
 			NRF_LOG_INFO("FDS flash badblock not found. writing");
-			m_fds_writed = false;
-			ret = fds_record_write(&flash_badblock_desc, &m_flash_bad_block_record);
-			NRF_LOG_INFO("FDS flash error:%d", ret);
-			//FDS_ERR_INVALID_ARG
-			APP_ERROR_CHECK(ret);
-			while(!m_fds_writed) nrf_pwr_mgmt_run();
+			nand_fds_write(&flash_badblock_desc, &m_flash_bad_block_record);
 			NRF_LOG_INFO("FDS flash badblock writed.");
 		
 		}
 		
-		
+}
+
+bool is_bad_block_existed(uint16_t bbnum)
+{
+
+    for (int i = 0; i < flash_badblocks.bad_block_num; i++)
+    {
+			
+        if (flash_badblocks.bad_blocks[i] == bbnum)
+        {
+
+            return true;
+        }
+    }
+
+    return false;
 }
