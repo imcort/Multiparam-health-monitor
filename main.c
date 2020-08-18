@@ -92,7 +92,7 @@
 
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
-#define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "TJUBMFE-PPG"                               /**< Name of device. Will be included in the advertising data. */
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
 
 #define APP_BLE_OBSERVER_PRIO           3                                           /**< Application's BLE observer priority. You shouldn't need to modify this value. */
@@ -252,13 +252,14 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						
 						fds_stat(&stat);
 						llength = sprintf(sendbuf,
-																			"nand block: %d, page: %d\nread block:%d, page: %d\n fds used: %d\n time:%u",
+				"nand block: %d, page: %d\nread block:%d, page: %d\nfds used: %d\nstarttime:%u\ncorrection:%u\n",
 																			flash_offset.block, 
 																			flash_offset.page, 
 																			flash_read.block, 
 																			flash_read.page, 
 																			stat.freeable_words,
-																			(uint32_t)((millis + settime) / 1000));
+																			(uint32_t)((millis) / 1000),
+																			(uint32_t)((settime) / 1000));
 				
 						ble_nus_data_send(&m_nus, (uint8_t *)sendbuf, &llength, m_conn_handle);
 
@@ -298,8 +299,9 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 				case 'g':
 						
 						sscanf((const char *)(p_evt->params.rx_data.p_data) + 1, "%u", &time_set);
-				
-						settime = ((int64_t)time_set * 1000) - millis;
+						
+						if(((int64_t)time_set * 1000) > millis)
+							settime = ((int64_t)time_set * 1000) - millis;
 				
 						break;
 				

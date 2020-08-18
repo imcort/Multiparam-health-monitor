@@ -17,10 +17,10 @@ static void spi_event_handler(nrf_drv_spi_evt_t const *p_event, void *p_context)
     spi_xfer_done = true;
 }
 
-#define FLASH_STATUS_FILE_ID (0xF010)
-#define FLASH_OFFSET_KEY     (0x7011)
-#define FLASH_READ_KEY       (0x7012)
-#define FLASH_BADBLOCK_KEY   (0x7013)
+#define FLASH_STATUS_FILE_ID (0x0004)
+#define FLASH_OFFSET_KEY     (0x0001)
+#define FLASH_READ_KEY       (0x0002)
+#define FLASH_BADBLOCK_KEY   (0x0003)
 
 static bool volatile m_fds_initialized;
 static bool volatile m_fds_writed;

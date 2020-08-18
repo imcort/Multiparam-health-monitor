@@ -34,7 +34,7 @@ APP_TIMER_DEF(fastACQ_timer);
 APP_TIMER_DEF(slowACQ_timer);
 APP_TIMER_DEF(log_timer);
 
-int64_t millis = 1596469679025;
+int64_t millis = 0;
 int64_t settime = 0;
 int16_t spo2 = 2048;
 int16_t heartRate = 0;
@@ -135,9 +135,7 @@ static void m_slowACQ_timer_handler(void *p_context)
 		//nrfx_saadc_sample_convert(2, &leads_off_volt);
 		leads_off_volt = nrf_gpio_pin_read(LEADS_OFF_PIN);
 		
-		//NRF_LOG_INFO("Leads off pin: %d", leads_off_volt);
-		
-		//leads_off_volt = 0;
+		leads_off_volt = 0;
 	
 		if((leads_off_volt == 0) && (!acq_is_working)) {
 				
