@@ -138,6 +138,7 @@ extern nand_flash_addr_t flash_read;
 extern nand_flash_badblocks_t flash_badblocks;
 
 extern int64_t millis;
+extern int64_t settime;
 
 extern int16_t rt_send_buffer[122];
 extern uint8_t flash_read_buffer[194];
@@ -257,7 +258,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 																			flash_read.block, 
 																			flash_read.page, 
 																			stat.freeable_words,
-																			(uint32_t)(millis / 1000));
+																			(uint32_t)((millis + settime) / 1000));
 				
 						ble_nus_data_send(&m_nus, (uint8_t *)sendbuf, &llength, m_conn_handle);
 
@@ -298,7 +299,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						
 						sscanf((const char *)(p_evt->params.rx_data.p_data) + 1, "%u", &time_set);
 				
-						millis = (int64_t)time_set * 1000;
+						settime = ((int64_t)time_set * 1000) - millis;
 				
 						break;
 				
@@ -907,15 +908,6 @@ int main(void)
     nand_flash_prepare();
 		NRF_LOG_INFO("NAND_OK");
 		
-//		uint8_t write[] = "hello";
-//		uint8_t read[10];
-//		nand_spi_flash_page_write(0,0,write,sizeof(write));
-//		nand_spi_flash_page_read(0,0,read,sizeof(write));
-//		NRF_LOG_INFO("%s",read);
-//		
-//		NRF_LOG_FLUSH();
-//		
-//		while(1) {}
 		timers_create();
 		timers_start();
 		

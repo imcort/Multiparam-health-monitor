@@ -13,6 +13,7 @@
 #include "ble_nus.h"
 
 #define QUEUE_SIZE 12
+#define LEADS_OFF_PIN 14
 
 NRF_QUEUE_DEF(int16_t, flash_ecg_queue, QUEUE_SIZE * 5, NRF_QUEUE_MODE_OVERFLOW);
 NRF_QUEUE_DEF(int16_t, flash_accx_queue, QUEUE_SIZE, NRF_QUEUE_MODE_OVERFLOW);
@@ -34,6 +35,7 @@ APP_TIMER_DEF(slowACQ_timer);
 APP_TIMER_DEF(log_timer);
 
 int64_t millis = 1596469679025;
+int64_t settime = 0;
 int16_t spo2 = 2048;
 int16_t heartRate = 0;
 int16_t bodytemp = 1024;
@@ -131,7 +133,7 @@ static void m_slowACQ_timer_handler(void *p_context)
 			nrfx_saadc_sample_convert(0, &bodytemp);
 		
 		//nrfx_saadc_sample_convert(2, &leads_off_volt);
-		leads_off_volt = nrf_gpio_pin_read(14);
+		leads_off_volt = nrf_gpio_pin_read(LEADS_OFF_PIN);
 		
 		//NRF_LOG_INFO("Leads off pin: %d", leads_off_volt);
 		
@@ -223,7 +225,7 @@ void saadc_init(void)
 		err_code = nrf_drv_saadc_channel_init(1, &channel_ecg);
     APP_ERROR_CHECK(err_code);
 	
-		nrf_gpio_cfg_input(14, NRF_GPIO_PIN_NOPULL);
+		nrf_gpio_cfg_input(LEADS_OFF_PIN, NRF_GPIO_PIN_NOPULL);
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +320,7 @@ void nand_flash_data_write(void)
 
             flash_write_buffer[60] = bodytemp;			//4202-4203
 						
-						*(int64_t*)(&flash_write_buffer[61]) = millis;
+						*(int64_t*)(&flash_write_buffer[61]) = millis + settime;
 //						flash_write_buffer[61] = millis >> 48;	//4204-4205
 //						flash_write_buffer[62] = millis >> 32;	//4206-4207
 //						flash_write_buffer[63] = millis >> 16;	//4208-4209
