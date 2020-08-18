@@ -2,9 +2,6 @@
 #include "nrf_pwr_mgmt.h"
 #include "pin_defines.h"
 
-/* TWI instance ID. */
-#define TWI_INSTANCE_ID 0
-
 /* Indicates if operation on TWI has ended. */
 static volatile bool m_xfer_done = false;
 

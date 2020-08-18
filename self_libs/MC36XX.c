@@ -483,9 +483,9 @@ bool MC36XXIsFIFOEmpty(void)
 MC36XX_acc_t MC36XXreadRawAccel(void)
 {
     //{2g, 4g, 8g, 16g, 12g}
-    float faRange[5] = { 19.614f, 39.228f, 78.456f, 156.912f, 117.684f};
+//    float faRange[5] = { 19.614f, 39.228f, 78.456f, 156.912f, 117.684f};
     //{6bit, 7bit, 8bit, 10bit, 12bit, 14bit}
-    float faResolution[6] = { 32.0f, 64.0f, 128.0f, 512.0f, 2048.0f, 8192.0f};
+//    float faResolution[6] = { 32.0f, 64.0f, 128.0f, 512.0f, 2048.0f, 8192.0f};
 
     uint8_t rawData[6];
     // Read the six raw data registers into data array

@@ -1,10 +1,15 @@
 #ifndef _PIN_DEFINES_H__
 #define _PIN_DEFINES_H__
 
+#define SPI_INSTANCE 0
+
 #define SPI_SCK_PIN						20
 #define SPI_MOSI_PIN					21
 #define SPI_MISO_PIN					8
 #define SPI_SS_PIN						5
+
+/* TWI instance ID. */
+#define TWI_INSTANCE_ID 0
 
 #define BOARD_SDA_PIN 				15
 #define BOARD_SCL_PIN 				16
