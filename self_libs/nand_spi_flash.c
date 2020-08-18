@@ -41,7 +41,7 @@
 static nand_spi_flash_config_t m_nsf_config;
 
 // spi read/write buffer
-static uint8_t *m_nsf_buffer = NULL;
+static uint8_t m_nsf_buffer[255];
 
 // page size in bytes
 static uint16_t m_nsf_page_size_bytes = 0;
@@ -70,10 +70,6 @@ uint16_t nand_spi_flash_blocks_count()
 int nand_spi_flash_init(const nand_spi_flash_config_t *config)
 {
   // check spi driver already inited and copy config
-  if (m_nsf_buffer != NULL)
-  {
-    return NSF_ERR_ALREADY_INITED;
-  }
   m_nsf_config = *config;
   uint8_t m_buffer[4];
 
@@ -88,12 +84,12 @@ int nand_spi_flash_init(const nand_spi_flash_config_t *config)
   }
 
   // identify device
-
   m_buffer[0] = NSF_CMD_READ_ID;
   if (m_nsf_config.spi_transfer(m_buffer, 2, 2) != 0)
   {
     return NSF_ERROR_SPI;
   }
+	
   if (m_buffer[2] == NSF_DEVICE_TOSHIBA_TC58CVx)
   { // Toshiba
     if (m_buffer[3] == NSF_DEVICE_TC58CVG2S0HxAIx)
@@ -107,7 +103,7 @@ int nand_spi_flash_init(const nand_spi_flash_config_t *config)
       return NSF_ERR_UNKNOWN_DEVICE;
     }
   }
-  else if (m_buffer[1] == NSF_DEVICE_GIGADEVICE_GD5FxGQ4x)
+	else if (m_buffer[1] == NSF_DEVICE_GIGADEVICE_GD5FxGQ4x)
   { // gygadevice
     if (m_buffer[2] == NSF_DEVICE_GD5F1GQ4R ||
         m_buffer[2] == NSF_DEVICE_GD5F1GQ4U)
@@ -132,23 +128,7 @@ int nand_spi_flash_init(const nand_spi_flash_config_t *config)
   {
     return NSF_ERR_UNKNOWN_DEVICE;
   }
-
-  // allocate read/write buffer
-  m_nsf_buffer = malloc(m_nsf_page_size_bytes + NSF_CMD_MAX_BYTES);
-
-  return NSF_ERR_OK;
-}
-
-//-----------------------------------------------------------------------------
-int nand_spi_flash_deinit()
-{
-  // deallocate read/write buffer
-  if (m_nsf_buffer != NULL)
-  {
-    free(m_nsf_buffer);
-    m_nsf_buffer = 0;
-  }
-  return NSF_ERR_OK;
+	return NSF_ERR_OK;
 }
 
 //-----------------------------------------------------------------------------

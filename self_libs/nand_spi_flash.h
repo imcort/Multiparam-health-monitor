@@ -54,9 +54,6 @@ int nand_spi_flash_init(const nand_spi_flash_config_t * config);
 // Reset and unlock flash device
 int nand_spi_flash_reset_unlock(void);
 
-// Deinit driver
-int nand_spi_flash_deinit(void);
-
 // Read Nand Flash Status Byte
 uint8_t nand_spi_flash_read_status(void);
 
