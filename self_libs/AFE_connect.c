@@ -5,6 +5,7 @@
 #include "nrf_gpio.h"
 
 #include "nrf_log.h"
+#include "pin_defines.h"
 
 void AFE_Reg_Write(uint8_t reg_address, uint32_t data);
 

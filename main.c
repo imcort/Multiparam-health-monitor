@@ -803,7 +803,7 @@ static void advertising_init(void)
  */
 static void buttons_leds_init(bool * p_erase_bonds)
 {
-    bsp_event_t startup_event;
+//    bsp_event_t startup_event;
 
     uint32_t err_code = bsp_init(BSP_INIT_LEDS, bsp_event_handler);
     APP_ERROR_CHECK(err_code);
@@ -871,7 +871,7 @@ static void lfclk_config(void)
 int main(void)
 {
     bool erase_bonds;
-		uint16_t llength;
+//		uint16_t llength;
 
     // Initialize.
 		lfclk_config();
@@ -890,6 +890,8 @@ int main(void)
 
     // Start execution.
     NRF_LOG_INFO("Debug logging for UART over RTT started.");
+		NRF_LOG_FLUSH();
+	
     advertising_start();
 
 		twi_init();

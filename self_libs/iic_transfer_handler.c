@@ -1,5 +1,6 @@
 #include "iic_transfer_handler.h"
 #include "nrf_pwr_mgmt.h"
+#include "pin_defines.h"
 
 /* TWI instance ID. */
 #define TWI_INSTANCE_ID 0

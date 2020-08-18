@@ -428,6 +428,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
             </File>
+            <File>
+              <FileName>pin_defines.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\self_libs\pin_defines.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3915,6 +3920,11 @@
               <FileName>data_acquire.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
+            </File>
+            <File>
+              <FileName>pin_defines.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\self_libs\pin_defines.h</FilePath>
             </File>
           </Files>
         </Group>

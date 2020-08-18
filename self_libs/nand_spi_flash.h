@@ -5,11 +5,6 @@
 
 #include <stdint.h>
 
-#define SPI_SCK_PIN			20
-#define SPI_MOSI_PIN		21
-#define SPI_MISO_PIN		8
-#define SPI_SS_PIN			5
-
 // NAND SPI Flash configuration 
 typedef struct nand_spi_flash_config_t {
   // SPI transfer function

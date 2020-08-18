@@ -7,6 +7,7 @@
 #include "nrf_pwr_mgmt.h"
 
 #include "nrf_log.h"
+#include "pin_defines.h"
 
 #define SPI_INSTANCE 0
 static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE);

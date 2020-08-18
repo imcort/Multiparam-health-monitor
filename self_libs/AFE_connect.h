@@ -1,8 +1,6 @@
 #ifndef AFE_CONNECT_H
 #define AFE_CONNECT_H
 
-#define AFE_CS_PIN 0
-
 /* AFE I2C address */
 #define AFE_ADDR 0x58
 

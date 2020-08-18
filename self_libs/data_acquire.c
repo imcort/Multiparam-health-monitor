@@ -11,9 +11,9 @@
 #include "nand_spi_flash.h"
 #include "data_storage.h"
 #include "ble_nus.h"
+#include "pin_defines.h"
 
 #define QUEUE_SIZE 12
-#define LEADS_OFF_PIN 14
 
 NRF_QUEUE_DEF(int16_t, flash_ecg_queue, QUEUE_SIZE * 5, NRF_QUEUE_MODE_OVERFLOW);
 NRF_QUEUE_DEF(int16_t, flash_accx_queue, QUEUE_SIZE, NRF_QUEUE_MODE_OVERFLOW);
@@ -212,7 +212,7 @@ void saadc_init(void)
     //nrf_saadc_channel_config_t channel_battery = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN2);
     //nrf_saadc_channel_config_t channel_leadsoff = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN4);
 
-    nrf_saadc_channel_config_t channel_ecg = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN2);
+    nrf_saadc_channel_config_t channel_ecg = NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(ADC_ECG_CHANNEL);
 
     err_code = nrf_drv_saadc_init(NULL, saadc_callback);
     APP_ERROR_CHECK(err_code);
