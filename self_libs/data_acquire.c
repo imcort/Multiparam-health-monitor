@@ -133,9 +133,11 @@ static void m_slowACQ_timer_handler(void *p_context)
 		//nrfx_saadc_sample_convert(2, &leads_off_volt);
 		leads_off_volt = nrf_gpio_pin_read(14);
 		
-		leads_off_volt = 1500;
+		//NRF_LOG_INFO("Leads off pin: %d", leads_off_volt);
+		
+		//leads_off_volt = 0;
 	
-		if((leads_off_volt < 3000) && (!acq_is_working)) {
+		if((leads_off_volt == 0) && (!acq_is_working)) {
 				
 				MC36XXSetMode(MC36XX_MODE_CWAKE);
 				AFE_enable();
@@ -190,8 +192,8 @@ void timers_start(void)
     err_code = app_timer_start(slowACQ_timer, APP_TIMER_TICKS(1000), NULL); 	//1Hz Bodytemp, Battery
     APP_ERROR_CHECK(err_code);
 
-//    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
-//    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
+    APP_ERROR_CHECK(err_code);
 }
 
 static void saadc_callback(nrf_drv_saadc_evt_t const *p_event)
@@ -306,7 +308,7 @@ void nand_flash_data_write(void)
             }
 
             errid = nand_spi_flash_page_write((flash_offset.block << 6) | flash_offset.page, flash_offset.column, (uint8_t *)flash_write_buffer, 240);
-            NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 240, nand_spi_flash_str_error(errid));
+            //NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 240, nand_spi_flash_str_error(errid));
             flash_offset.column += 240;
             flash_write_data_offset = 0;
         }
@@ -324,12 +326,12 @@ void nand_flash_data_write(void)
 					
             //*(uint32_t *)&flash_write_buffer[70] = millis;  //4221-4224
             errid = nand_spi_flash_page_write((flash_offset.block << 6) | flash_offset.page, flash_offset.column, (uint8_t *)flash_write_buffer, 132);
-            NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 144, nand_spi_flash_str_error(errid));
+            //NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 144, nand_spi_flash_str_error(errid));
             flash_offset.column = 0;
             flash_write_data_offset = 0;
             flash_offset.page++;
 					
-						if((leads_off_volt >= 3000) && (acq_is_working)) {
+						if((leads_off_volt == 1) && (acq_is_working)) {
 				
 								
 								ret = app_timer_stop(fastACQ_timer); 		//500Hz ECG, ACC, SpO2
@@ -385,7 +387,7 @@ void nand_flash_data_read(void)
 				
         if (ret == NRF_SUCCESS)
         {
-            NRF_LOG_INFO("send success block %d, page %d, column %d, size %d, %s", flash_read.block, flash_read.page, flash_read.column, 192, nand_spi_flash_str_error(errid));
+            //NRF_LOG_INFO("send success block %d, page %d, column %d, size %d, %s", flash_read.block, flash_read.page, flash_read.column, 192, nand_spi_flash_str_error(errid));
             is_read = false;
             flash_read.column += 192;
             if (flash_read.column == 4224)
