@@ -3429,7 +3429,14 @@
  
 
 #ifndef NRFX_TWIM0_ENABLED
-#define NRFX_TWIM0_ENABLED 0
+#define NRFX_TWIM0_ENABLED 1
+#endif
+
+// <q> NRFX_TWIM1_ENABLED  - Enable TWIM1 instance
+ 
+
+#ifndef NRFX_TWIM1_ENABLED
+#define NRFX_TWIM1_ENABLED 0
 #endif
 
 // <o> NRFX_TWIM_DEFAULT_CONFIG_FREQUENCY  - Frequency
@@ -5092,6 +5099,20 @@
 
 #ifndef TWI0_USE_EASY_DMA
 #define TWI0_USE_EASY_DMA 1
+#endif
+
+// </e>
+
+// <e> TWI1_ENABLED - Enable TWI1 instance
+//==========================================================
+#ifndef TWI1_ENABLED
+#define TWI1_ENABLED 0
+#endif
+// <q> TWI1_USE_EASY_DMA  - Use EasyDMA (if present)
+ 
+
+#ifndef TWI1_USE_EASY_DMA
+#define TWI1_USE_EASY_DMA 1
 #endif
 
 // </e>
@@ -6874,7 +6895,7 @@
 // <e> NRF_LOG_BACKEND_RTT_ENABLED - nrf_log_backend_rtt - Log RTT backend
 //==========================================================
 #ifndef NRF_LOG_BACKEND_RTT_ENABLED
-#define NRF_LOG_BACKEND_RTT_ENABLED 1
+#define NRF_LOG_BACKEND_RTT_ENABLED 0
 #endif
 // <o> NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE - Size of buffer for partially processed strings. 
 // <i> Size of the buffer is a trade-off between RAM usage and processing.
@@ -6907,7 +6928,7 @@
 // <e> NRF_LOG_ENABLED - nrf_log - Logger
 //==========================================================
 #ifndef NRF_LOG_ENABLED
-#define NRF_LOG_ENABLED 1
+#define NRF_LOG_ENABLED 0
 #endif
 // <h> Log message pool - Configuration of log message pool
 
@@ -9858,7 +9879,7 @@
  
 
 #ifndef NRF_LOG_STR_FORMATTER_TIMESTAMP_FORMAT_ENABLED
-#define NRF_LOG_STR_FORMATTER_TIMESTAMP_FORMAT_ENABLED 1
+#define NRF_LOG_STR_FORMATTER_TIMESTAMP_FORMAT_ENABLED 0
 #endif
 
 // </h> 

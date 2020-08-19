@@ -132,7 +132,17 @@ void fds_prepare(void)
     ret_code_t err_code;
 
     (void)fds_register(fds_evt_handler);
-
+	
+		m_fds_gc = false;
+		ret_code_t ret = fds_gc();
+		APP_ERROR_CHECK(ret);
+		while(!m_fds_gc) {
+					
+					nrf_pwr_mgmt_run();
+			
+		}
+		
+		m_fds_initialized = false;
     err_code = fds_init();
     APP_ERROR_CHECK(err_code);
 
@@ -183,7 +193,7 @@ void fds_gc_process(void){
 		APP_ERROR_CHECK(ret);
 		while(!m_fds_gc) {
 					
-					//nrf_pwr_mgmt_run();
+					nrf_pwr_mgmt_run();
 			
 		}
 }
