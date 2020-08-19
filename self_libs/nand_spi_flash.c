@@ -71,28 +71,27 @@ int nand_spi_flash_init(const nand_spi_flash_config_t *config)
 {
   // check spi driver already inited and copy config
   m_nsf_config = *config;
-  uint8_t m_buffer[4];
 
   //Disable HSE Mode
-  m_buffer[0] = 0x1F;
-  m_buffer[1] = 0xB0;
-  m_buffer[2] = 0x00;
+  m_nsf_buffer[0] = 0x1F;
+  m_nsf_buffer[1] = 0xB0;
+  m_nsf_buffer[2] = 0x00;
 
-  if (m_nsf_config.spi_transfer(m_buffer, 3, 0) != 0)
+  if (m_nsf_config.spi_transfer(m_nsf_buffer, 3, 0) != 0)
   {
     return NSF_ERROR_SPI;
   }
 
   // identify device
-  m_buffer[0] = NSF_CMD_READ_ID;
-  if (m_nsf_config.spi_transfer(m_buffer, 2, 2) != 0)
+  m_nsf_buffer[0] = NSF_CMD_READ_ID;
+  if (m_nsf_config.spi_transfer(m_nsf_buffer, 2, 2) != 0)
   {
     return NSF_ERROR_SPI;
   }
 	
-  if (m_buffer[2] == NSF_DEVICE_TOSHIBA_TC58CVx)
+  if (m_nsf_buffer[2] == NSF_DEVICE_TOSHIBA_TC58CVx)
   { // Toshiba
-    if (m_buffer[3] == NSF_DEVICE_TC58CVG2S0HxAIx)
+    if (m_nsf_buffer[3] == NSF_DEVICE_TC58CVG2S0HxAIx)
     { // TC58CVG2S0HxAIx
       m_nsf_page_size_bytes = 4224;
       m_nsf_block_size_pages = 64;
@@ -103,17 +102,17 @@ int nand_spi_flash_init(const nand_spi_flash_config_t *config)
       return NSF_ERR_UNKNOWN_DEVICE;
     }
   }
-	else if (m_buffer[1] == NSF_DEVICE_GIGADEVICE_GD5FxGQ4x)
+	else if (m_nsf_buffer[1] == NSF_DEVICE_GIGADEVICE_GD5FxGQ4x)
   { // gygadevice
-    if (m_buffer[2] == NSF_DEVICE_GD5F1GQ4R ||
-        m_buffer[2] == NSF_DEVICE_GD5F1GQ4U)
+    if (m_nsf_buffer[2] == NSF_DEVICE_GD5F1GQ4R ||
+        m_nsf_buffer[2] == NSF_DEVICE_GD5F1GQ4U)
     { // 1Gbit
       m_nsf_page_size_bytes = 2048;
       m_nsf_block_size_pages = 64;
       m_nsf_blocks_count = 1024;
     }
-    else if (m_buffer[2] == NSF_DEVICE_GD5F2GQ4R ||
-             m_buffer[2] == NSF_DEVICE_GD5F2GQ4U)
+    else if (m_nsf_buffer[2] == NSF_DEVICE_GD5F2GQ4R ||
+             m_nsf_buffer[2] == NSF_DEVICE_GD5F2GQ4U)
     { // 2Gbit
       m_nsf_page_size_bytes = 2048;
       m_nsf_block_size_pages = 64;

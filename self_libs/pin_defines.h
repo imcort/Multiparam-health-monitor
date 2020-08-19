@@ -30,7 +30,7 @@
 
 #define BOARDS_LED						5
 
-#define SPI_INSTANCE 					0
+#define SPI_INSTANCE 					1
 
 #define SPI_SCK_PIN						8
 #define SPI_MOSI_PIN					21
@@ -38,7 +38,7 @@
 #define SPI_SS_PIN						7
 
 /* TWI instance ID. */
-#define TWI_INSTANCE_ID 			1
+#define TWI_INSTANCE_ID 			0
 
 #define BOARD_SDA_PIN 				18
 #define BOARD_SCL_PIN 				20

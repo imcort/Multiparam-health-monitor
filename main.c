@@ -880,6 +880,7 @@ int main(void)
     buttons_leds_init(&erase_bonds);
     power_management_init();
     ble_stack_init();
+
     gap_params_init();
     gatt_init();
     services_init();
@@ -911,7 +912,7 @@ int main(void)
 		
     nand_flash_prepare();
 		NRF_LOG_INFO("NAND_OK");
-		
+
 		timers_create();
 		timers_start();
 		

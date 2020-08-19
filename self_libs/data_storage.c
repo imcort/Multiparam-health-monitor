@@ -7,6 +7,7 @@
 #include "nrf_pwr_mgmt.h"
 
 #include "nrf_log.h"
+#include "nrf_log_ctrl.h"
 #include "pin_defines.h"
 
 static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE);
@@ -122,6 +123,8 @@ static void fds_evt_handler(fds_evt_t const *p_evt)
     break;
 
     default:
+			NRF_LOG_INFO("fds err",p_evt->id);
+			NRF_LOG_FLUSH();
         break;
     }
 }
@@ -162,11 +165,11 @@ int nand_spi_transfer(uint8_t *buffer, uint16_t tx_len, uint16_t rx_len)
 {
 
     spi_xfer_done = false;
-
+	
     APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, buffer, tx_len, buffer, tx_len + rx_len));
 
     while (!spi_xfer_done) nrf_pwr_mgmt_run();
-
+		
     return NSF_ERR_OK;
 }
 

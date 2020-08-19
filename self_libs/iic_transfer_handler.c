@@ -28,10 +28,13 @@ void twi_handler(nrf_drv_twi_evt_t const *p_event, void *p_context)
 			break;
 		default:
 			
-			llength = sprintf(twi_err_sendbuf, "TWI ERR Addr:%x, Err:%d", p_event->xfer_desc.address, p_event->type);
-			do{
-				ret = ble_data_send((uint8_t*)twi_err_sendbuf, llength);
-			} while (ret != NRF_SUCCESS) ;
+//			llength = sprintf(twi_err_sendbuf, "TWI ERR Addr:%x, Err:%d", p_event->xfer_desc.address, p_event->type);
+//			do{
+//				ret = ble_data_send((uint8_t*)twi_err_sendbuf, llength);
+//			} while (ret != NRF_SUCCESS) ;
+		
+		NRF_LOG_INFO("IIC ERROR");
+		NRF_LOG_FLUSH();
 			
 			break;
 	}
