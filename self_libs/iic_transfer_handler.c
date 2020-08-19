@@ -11,18 +11,29 @@ static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 static uint8_t iic_sendbuf[20];
 static uint8_t iic_recvbuf[20];
 
+ret_code_t ble_data_send(uint8_t* sendbuf, uint16_t llength);
+
 /**
  * @brief TWI events handler.
  */
 void twi_handler(nrf_drv_twi_evt_t const *p_event, void *p_context)
 {
+	uint16_t llength = 0;
+	char twi_err_sendbuf[30];
+	ret_code_t ret;
 	switch (p_event->type)
 	{
-	case NRF_DRV_TWI_EVT_DONE:
-		m_xfer_done = true;
-		break;
-	default:
-		break;
+		case NRF_DRV_TWI_EVT_DONE:
+			m_xfer_done = true;
+			break;
+		default:
+			
+			llength = sprintf(twi_err_sendbuf, "TWI ERR Addr:%x, Err:%d", p_event->xfer_desc.address, p_event->type);
+			do{
+				ret = ble_data_send((uint8_t*)twi_err_sendbuf, llength);
+			} while (ret != NRF_SUCCESS) ;
+			
+			break;
 	}
 }
 
