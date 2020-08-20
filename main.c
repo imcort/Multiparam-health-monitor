@@ -876,6 +876,7 @@ int main(void)
     // Initialize.
 		lfclk_config();
     log_init();
+    APP_ERROR_CHECK(ble_dfu_buttonless_async_svci_init());
     timers_init();
     buttons_leds_init(&erase_bonds);
     power_management_init();

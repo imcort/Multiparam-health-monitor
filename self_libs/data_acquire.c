@@ -318,7 +318,7 @@ void nand_flash_data_write(void)
 
             flash_write_buffer[60] = bodytemp;			//4202-4203
 						
-						*(int64_t*)(&flash_write_buffer[61]) = millis + settime;
+						*(int64_t*)(&flash_write_buffer[61]) = millis;
 //						flash_write_buffer[61] = millis >> 48;	//4204-4205
 //						flash_write_buffer[62] = millis >> 32;	//4206-4207
 //						flash_write_buffer[63] = millis >> 16;	//4208-4209
@@ -382,6 +382,8 @@ void nand_flash_data_read(void)
         }
 
         *(int16_t*)flash_read_buffer = flash_read.column / 192;
+				if(flash_read.column == 4032)
+					*(int64_t*)(&flash_read_buffer[174]) = *(int64_t*)(&flash_read_buffer[174]) + settime;
 				ret = ble_data_send(flash_read_buffer, 194);
 				//ret_flag = true;
 				
