@@ -33,7 +33,7 @@ void twi_handler(nrf_drv_twi_evt_t const *p_event, void *p_context)
 //				ret = ble_data_send((uint8_t*)twi_err_sendbuf, llength);
 //			} while (ret != NRF_SUCCESS) ;
 		
-		NRF_LOG_INFO("IIC ERROR,%x", p_event->xfer_desc.address);
+		NRF_LOG_INFO("IIC ERROR,%x,%d", p_event->xfer_desc.address, p_event->type);
 		NRF_LOG_FLUSH();
 			
 			break;

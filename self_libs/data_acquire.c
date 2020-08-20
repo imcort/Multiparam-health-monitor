@@ -135,7 +135,7 @@ static void m_slowACQ_timer_handler(void *p_context)
 		//nrfx_saadc_sample_convert(2, &leads_off_volt);
 		leads_off_volt = nrf_gpio_pin_read(LEADS_OFF_PIN);
 		
-		leads_off_volt = 0;
+		//leads_off_volt = 0;
 	
 		if((leads_off_volt == 0) && (!acq_is_working)) {
 				

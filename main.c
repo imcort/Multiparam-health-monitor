@@ -143,6 +143,8 @@ extern int64_t settime;
 extern int16_t rt_send_buffer[122];
 extern uint8_t flash_read_buffer[194];
 
+int init_status = 0;
+
 ret_code_t ble_data_send(uint8_t* sendbuf, uint16_t llength)
 {
 	
@@ -229,7 +231,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 {
 		if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
-        char sendbuf[100];
+        char sendbuf[200];
 				uint16_t llength;
 			
 				uint32_t time_set;
@@ -252,7 +254,8 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						
 						fds_stat(&stat);
 						llength = sprintf(sendbuf,
-				"nand block: %d, page: %d\nread block:%d, page: %d\nfds used: %d\nstarttime:%u\ncorrection:%u\n",
+				"init_status %d, nand block: %d, page: %d\nread block:%d, page: %d\nfds used: %d\nstarttime:%u\ncorrection:%u\n",
+																			init_status,
 																			flash_offset.block, 
 																			flash_offset.page, 
 																			flash_read.block, 
@@ -276,6 +279,8 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 				
 						memset(flash_badblocks.bad_blocks,0,sizeof(flash_badblocks.bad_blocks));
 						flash_badblocks.bad_block_num = 0;
+				
+						fds_gc_process();
 				
 						flash_write_full = false;
 
@@ -303,6 +308,14 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						if(((int64_t)time_set * 1000) > millis)
 							settime = ((int64_t)time_set * 1000) - millis;
 				
+						break;
+						
+				case 'h':
+					
+						flash_read.block = 0;
+						flash_read.page = 0;
+						flash_read.column = 0;
+						
 						break;
 				
         default:
@@ -344,7 +357,7 @@ static bool app_shutdown_handler(nrf_pwr_mgmt_evt_t event)
             // else
             //{
             //
-            //    // Device ready to enter
+            // Device ready to enter
             //    uint32_t err_code;
             //    err_code = sd_softdevice_disable();
             //    APP_ERROR_CHECK(err_code);
@@ -876,7 +889,7 @@ int main(void)
     // Initialize.
 		lfclk_config();
     log_init();
-    APP_ERROR_CHECK(ble_dfu_buttonless_async_svci_init());
+    //APP_ERROR_CHECK(ble_dfu_buttonless_async_svci_init());
     timers_init();
     buttons_leds_init(&erase_bonds);
     power_management_init();
@@ -898,24 +911,32 @@ int main(void)
 
 		twi_init();
 		NRF_LOG_INFO("TWI_OK");
+		init_status = 1;
 		
     AFEinit();
 		NRF_LOG_INFO("AFE_OK");
+		init_status = 2;
 
     MC36XXstart();
 		NRF_LOG_INFO("ACC_OK");
+		init_status = 3;
 		
     saadc_init();
 		NRF_LOG_INFO("SAADC_OK");
+		init_status = 4;
 		
 		fds_prepare();
 		NRF_LOG_INFO("FDS_OK");
+		init_status = 5;
 		
     nand_flash_prepare();
 		NRF_LOG_INFO("NAND_OK");
+		init_status = 6;
 
 		timers_create();
+		init_status = 7;
 		timers_start();
+		init_status = 8;
 		
     // Enter main loop.
     for (;;)
