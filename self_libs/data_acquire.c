@@ -383,7 +383,7 @@ void nand_flash_data_read(void)
 
         *(int16_t*)flash_read_buffer = flash_read.column / 192;
 				if(flash_read.column == 4032)
-					*(int64_t*)(&flash_read_buffer[174]) = *(int64_t*)(&flash_read_buffer[174]) + settime;
+					*(int64_t*)(&flash_read_buffer[171]) = *(int64_t*)(&flash_read_buffer[171]) + settime;
 				ret = ble_data_send(flash_read_buffer, 194);
 				//ret_flag = true;
 				

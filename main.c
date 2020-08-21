@@ -312,6 +312,10 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						
 				case 'h':
 					
+						flash_offset.column = 0;
+						flash_offset.page = 0;
+						flash_offset.block = 2000;
+					
 						flash_read.block = 0;
 						flash_read.page = 0;
 						flash_read.column = 0;
