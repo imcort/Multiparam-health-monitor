@@ -18,8 +18,6 @@ ret_code_t ble_data_send(uint8_t* sendbuf, uint16_t llength);
  */
 void twi_handler(nrf_drv_twi_evt_t const *p_event, void *p_context)
 {
-	uint16_t llength = 0;
-	char twi_err_sendbuf[30];
 	ret_code_t ret;
 	switch (p_event->type)
 	{

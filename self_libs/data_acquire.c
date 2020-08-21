@@ -336,7 +336,7 @@ void nand_flash_data_write(void)
 								
 								ret = app_timer_stop(fastACQ_timer); 		//500Hz ECG, ACC, SpO2
 								APP_ERROR_CHECK(ret);
-								MC36XXSetMode(MC36XX_MODE_SLEEP);
+								MC36XXSetMode(MC36XX_MODE_STANDBY);
 								AFE_shutdown();
 								acq_is_working = false;
 							
