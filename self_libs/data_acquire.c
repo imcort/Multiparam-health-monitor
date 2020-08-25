@@ -388,9 +388,9 @@ void nand_flash_data_read(void)
 								//NRF_LOG_INFO("172 %x %x %x %x", flash_read_buffer[172], flash_read_buffer[173], flash_read_buffer[174], flash_read_buffer[175]);
 								uint8_t millis_buf[8];
 								memcpy(millis_buf, flash_read_buffer + 172, 8);
-								int64_t read_millis = *(int64_t*)millis_buf;
-								read_millis = read_millis + settime;
-								NRF_LOG_INFO("read_millis %u",(uint32_t)((read_millis) / 1000));
+								int64_t* read_millis = (int64_t*)millis_buf;
+								*read_millis = *read_millis + settime;
+								NRF_LOG_INFO("read_millis %u",(uint32_t)((*read_millis) / 1000));
 								memcpy(flash_read_buffer + 172, millis_buf, 8);
 								//*(int64_t*)(&flash_read_buffer[172]) = read_millis;
 						}
