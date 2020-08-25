@@ -282,8 +282,6 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						memset(flash_badblocks.bad_blocks,0,sizeof(flash_badblocks.bad_blocks));
 						flash_badblocks.bad_block_num = 0;
 				
-						fds_gc_process();
-				
 						flash_write_full = false;
 
             break;

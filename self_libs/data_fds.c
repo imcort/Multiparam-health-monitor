@@ -74,8 +74,8 @@ fds_record_t const m_flash_bad_block_record =
 
 static void fds_evt_handler(fds_evt_t const *p_evt)
 {
-    NRF_LOG_INFO("Event: %d received (%d)", p_evt->id, p_evt->result);
-		NRF_LOG_FLUSH();
+    //NRF_LOG_INFO("Event: %d received (%d)", p_evt->id, p_evt->result);
+		//NRF_LOG_FLUSH();
 
     switch (p_evt->id)
     {

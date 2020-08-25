@@ -12,6 +12,7 @@
 #include "data_storage.h"
 #include "ble_nus.h"
 #include "pin_defines.h"
+#include "data_fds.h"
 
 #define QUEUE_SIZE 12
 
@@ -379,17 +380,27 @@ void nand_flash_data_read(void)
         {
             errid = nand_spi_flash_page_read((flash_read.block << 6) | flash_read.page, flash_read.column, flash_read_buffer + 2, 192);
             is_read = true;
-        }
+        
 
-        *(int16_t*)flash_read_buffer = flash_read.column / 192;
-				if(flash_read.column == 4032)
-					*(int64_t*)(&flash_read_buffer[171]) = *(int64_t*)(&flash_read_buffer[171]) + settime;
+						*(int16_t*)flash_read_buffer = flash_read.column / 192;
+						if(flash_read.column == 4032)
+						{
+								//NRF_LOG_INFO("172 %x %x %x %x", flash_read_buffer[172], flash_read_buffer[173], flash_read_buffer[174], flash_read_buffer[175]);
+								uint8_t millis_buf[8];
+								memcpy(millis_buf, flash_read_buffer + 172, 8);
+								int64_t read_millis = *(int64_t*)millis_buf;
+								read_millis = read_millis + settime;
+								NRF_LOG_INFO("read_millis %u",(uint32_t)((read_millis) / 1000));
+								memcpy(flash_read_buffer + 172, millis_buf, 8);
+								//*(int64_t*)(&flash_read_buffer[172]) = read_millis;
+						}
+				}		
+				
 				ret = ble_data_send(flash_read_buffer, 194);
-				//ret_flag = true;
 				
         if (ret == NRF_SUCCESS)
         {
-            //NRF_LOG_INFO("send success block %d, page %d, column %d, size %d, %s", flash_read.block, flash_read.page, flash_read.column, 192, nand_spi_flash_str_error(errid));
+            NRF_LOG_INFO("send success block %d, page %d, column %d, size %d, %s", flash_read.block, flash_read.page, flash_read.column, 192, nand_spi_flash_str_error(errid));
             is_read = false;
             flash_read.column += 192;
             if (flash_read.column == 4224)
