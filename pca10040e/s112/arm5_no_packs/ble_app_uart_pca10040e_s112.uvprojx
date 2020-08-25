@@ -301,7 +301,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x200022d8</StartAddress>
-                <Size>0x3d28</Size>
+                <Size>0x3d48</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -399,6 +399,16 @@
               <FilePath>..\..\..\self_libs\AFE_connect.c</FilePath>
             </File>
             <File>
+              <FileName>data_acquire.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
+            </File>
+            <File>
+              <FileName>data_storage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_storage.c</FilePath>
+            </File>
+            <File>
               <FileName>iic_transfer_handler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\self_libs\iic_transfer_handler.c</FilePath>
@@ -414,24 +424,14 @@
               <FilePath>..\..\..\self_libs\nand_spi_flash.c</FilePath>
             </File>
             <File>
-              <FileName>spo2_algorithm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\spo2_algorithm.c</FilePath>
-            </File>
-            <File>
-              <FileName>data_storage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\data_storage.c</FilePath>
-            </File>
-            <File>
-              <FileName>data_acquire.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
-            </File>
-            <File>
               <FileName>pin_defines.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\self_libs\pin_defines.h</FilePath>
+            </File>
+            <File>
+              <FileName>data_fds.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_fds.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1472,9 +1472,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>nrfx_spi.c</FileName>
+              <FileName>nrfx_twim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_spi.c</FilePath>
+              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_twim.c</FilePath>
             </File>
             <File>
               <FileName>nrfx_spim.c</FileName>
@@ -1482,14 +1482,9 @@
               <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_spim.c</FilePath>
             </File>
             <File>
-              <FileName>nrfx_twim.c</FileName>
+              <FileName>nrfx_saadc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_twim.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_twi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_twi.c</FilePath>
+              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_saadc.c</FilePath>
             </File>
             <File>
               <FileName>nrf_drv_spi.c</FileName>
@@ -1500,11 +1495,6 @@
               <FileName>nrf_drv_twi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\integration\nrfx\legacy\nrf_drv_twi.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_saadc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_saadc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3892,6 +3882,16 @@
               <FilePath>..\..\..\self_libs\AFE_connect.c</FilePath>
             </File>
             <File>
+              <FileName>data_acquire.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
+            </File>
+            <File>
+              <FileName>data_storage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_storage.c</FilePath>
+            </File>
+            <File>
               <FileName>iic_transfer_handler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\self_libs\iic_transfer_handler.c</FilePath>
@@ -3907,24 +3907,14 @@
               <FilePath>..\..\..\self_libs\nand_spi_flash.c</FilePath>
             </File>
             <File>
-              <FileName>spo2_algorithm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\spo2_algorithm.c</FilePath>
-            </File>
-            <File>
-              <FileName>data_storage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\data_storage.c</FilePath>
-            </File>
-            <File>
-              <FileName>data_acquire.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
-            </File>
-            <File>
               <FileName>pin_defines.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\self_libs\pin_defines.h</FilePath>
+            </File>
+            <File>
+              <FileName>data_fds.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_fds.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -4965,9 +4955,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>nrfx_spi.c</FileName>
+              <FileName>nrfx_twim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_spi.c</FilePath>
+              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_twim.c</FilePath>
             </File>
             <File>
               <FileName>nrfx_spim.c</FileName>
@@ -4975,14 +4965,9 @@
               <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_spim.c</FilePath>
             </File>
             <File>
-              <FileName>nrfx_twim.c</FileName>
+              <FileName>nrfx_saadc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_twim.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_twi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_twi.c</FilePath>
+              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_saadc.c</FilePath>
             </File>
             <File>
               <FileName>nrf_drv_spi.c</FileName>
@@ -4993,11 +4978,6 @@
               <FileName>nrf_drv_twi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\integration\nrfx\legacy\nrf_drv_twi.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_saadc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\modules\nrfx\drivers\src\nrfx_saadc.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -2814,7 +2814,7 @@
 // <3=> 14 bit 
 
 #ifndef NRFX_SAADC_CONFIG_RESOLUTION
-#define NRFX_SAADC_CONFIG_RESOLUTION 1
+#define NRFX_SAADC_CONFIG_RESOLUTION 2
 #endif
 
 // <o> NRFX_SAADC_CONFIG_OVERSAMPLE  - Sample period
@@ -2917,7 +2917,7 @@
  
 
 #ifndef NRFX_SPIM0_ENABLED
-#define NRFX_SPIM0_ENABLED 0
+#define NRFX_SPIM0_ENABLED 1
 #endif
 
 // <o> NRFX_SPIM_MISO_PULL_CFG  - MISO pin pull configuration.
@@ -3095,7 +3095,7 @@
 // <e> NRFX_SPI_ENABLED - nrfx_spi - SPI peripheral driver
 //==========================================================
 #ifndef NRFX_SPI_ENABLED
-#define NRFX_SPI_ENABLED 1
+#define NRFX_SPI_ENABLED 0
 #endif
 // <q> NRFX_SPI0_ENABLED  - Enable SPI0 instance
  
@@ -3432,13 +3432,6 @@
 #define NRFX_TWIM0_ENABLED 1
 #endif
 
-// <q> NRFX_TWIM1_ENABLED  - Enable TWIM1 instance
- 
-
-#ifndef NRFX_TWIM1_ENABLED
-#define NRFX_TWIM1_ENABLED 0
-#endif
-
 // <o> NRFX_TWIM_DEFAULT_CONFIG_FREQUENCY  - Frequency
  
 // <26738688=> 100k 
@@ -3655,7 +3648,7 @@
 // <e> NRFX_TWI_ENABLED - nrfx_twi - TWI peripheral driver
 //==========================================================
 #ifndef NRFX_TWI_ENABLED
-#define NRFX_TWI_ENABLED 1
+#define NRFX_TWI_ENABLED 0
 #endif
 // <q> NRFX_TWI0_ENABLED  - Enable TWI0 instance
  
@@ -4703,7 +4696,7 @@
 // <3=> 14 bit 
 
 #ifndef SAADC_CONFIG_RESOLUTION
-#define SAADC_CONFIG_RESOLUTION 2
+#define SAADC_CONFIG_RESOLUTION 1
 #endif
 
 // <o> SAADC_CONFIG_OVERSAMPLE  - Sample period
@@ -4726,7 +4719,7 @@
  
 
 #ifndef SAADC_CONFIG_LP_MODE
-#define SAADC_CONFIG_LP_MODE 1
+#define SAADC_CONFIG_LP_MODE 0
 #endif
 
 // <o> SAADC_CONFIG_IRQ_PRIORITY  - Interrupt priority
@@ -5099,20 +5092,6 @@
 
 #ifndef TWI0_USE_EASY_DMA
 #define TWI0_USE_EASY_DMA 1
-#endif
-
-// </e>
-
-// <e> TWI1_ENABLED - Enable TWI1 instance
-//==========================================================
-#ifndef TWI1_ENABLED
-#define TWI1_ENABLED 0
-#endif
-// <q> TWI1_USE_EASY_DMA  - Use EasyDMA (if present)
- 
-
-#ifndef TWI1_USE_EASY_DMA
-#define TWI1_USE_EASY_DMA 1
 #endif
 
 // </e>
@@ -5991,7 +5970,7 @@
 // <i> Additionally, they will not be garbage collected until they are deleted.
 //==========================================================
 #ifndef FDS_CRC_CHECK_ON_READ
-#define FDS_CRC_CHECK_ON_READ 0
+#define FDS_CRC_CHECK_ON_READ 1
 #endif
 // <o> FDS_CRC_CHECK_ON_WRITE  - Perform a CRC check on newly written records.
  

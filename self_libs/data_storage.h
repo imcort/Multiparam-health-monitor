@@ -22,11 +22,6 @@ typedef struct
 
 } nand_flash_badblocks_t;
 
-void fds_prepare(void);
 void nand_flash_prepare(void);
-void nand_fds_update(void* desc, const void* src);
-void fds_gc_process(void);
-bool is_bad_block_existed(uint16_t bbnum);
-
 
 #endif

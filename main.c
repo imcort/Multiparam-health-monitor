@@ -78,7 +78,7 @@
 #include "MC36XX.h"
 #include "data_storage.h"
 #include "nrf_drv_saadc.h"
-#include "fds.h"
+#include "data_fds.h"
 #include <math.h>
 #include "data_acquire.h"
 #include "nand_spi_flash.h"
@@ -89,6 +89,8 @@
 #include "nrf_dfu_ble_svci_bond_sharing.h"
 #include "nrf_svci_async_function.h"
 #include "nrf_svci_async_handler.h"
+
+#include "fds.h"
 
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
@@ -891,7 +893,7 @@ int main(void)
 //		uint16_t llength;
 
     // Initialize.
-		lfclk_config();
+		//lfclk_config();
     log_init();
     //APP_ERROR_CHECK(ble_dfu_buttonless_async_svci_init());
     timers_init();
@@ -920,7 +922,7 @@ int main(void)
     AFEinit();
 		NRF_LOG_INFO("AFE_OK");
 		init_status = 2;
-
+		
     MC36XXstart();
 		NRF_LOG_INFO("ACC_OK");
 		init_status = 3;
@@ -929,12 +931,12 @@ int main(void)
 		NRF_LOG_INFO("SAADC_OK");
 		init_status = 4;
 		
-		fds_prepare();
-		NRF_LOG_INFO("FDS_OK");
+		nand_flash_prepare();
+		NRF_LOG_INFO("NAND_OK");
 		init_status = 5;
 		
-    nand_flash_prepare();
-		NRF_LOG_INFO("NAND_OK");
+    fds_prepare();
+		NRF_LOG_INFO("FDS_OK");
 		init_status = 6;
 
 		timers_create();
