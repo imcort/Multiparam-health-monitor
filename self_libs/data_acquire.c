@@ -47,6 +47,8 @@ bool is_connected = false;
 bool acq_is_working = false;
 bool flash_write_full = false;
 
+bool force_acq_mode = false;
+
 int16_t leads_off_volt = 0;
 
 extern nand_flash_addr_t flash_offset;
@@ -112,6 +114,7 @@ static void m_fastACQ_timer_handler(void *p_context)
 				break;
 			case 4:
 				val = AFE_Reg_Read_int16(LED2VAL);
+				
 				nrf_queue_push(&flash_ppgir_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_ppgir_queue, &val);
@@ -136,7 +139,8 @@ static void m_slowACQ_timer_handler(void *p_context)
 		//nrfx_saadc_sample_convert(2, &leads_off_volt);
 		leads_off_volt = nrf_gpio_pin_read(LEADS_OFF_PIN);
 		
-		//leads_off_volt = 0;
+		if(force_acq_mode)
+		  leads_off_volt = 0;
 	
 		if((leads_off_volt == 0) && (!acq_is_working)) {
 				
@@ -193,8 +197,8 @@ void timers_start(void)
     err_code = app_timer_start(slowACQ_timer, APP_TIMER_TICKS(1000), NULL); 	//1Hz Bodytemp, Battery
     APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
-    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
+//    APP_ERROR_CHECK(err_code);
 }
 
 static void saadc_callback(nrf_drv_saadc_evt_t const *p_event)

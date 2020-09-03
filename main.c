@@ -99,7 +99,7 @@
 
 #define APP_BLE_OBSERVER_PRIO           3                                           /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 
-#define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
+#define APP_ADV_INTERVAL                512                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
 
 #define APP_ADV_DURATION                0                                       /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
@@ -134,6 +134,7 @@ extern bool in_flash_send_mode;
 extern bool is_connected;
 
 extern bool flash_write_full;
+extern bool force_acq_mode;
 
 extern nand_flash_addr_t flash_offset;
 extern nand_flash_addr_t flash_read;
@@ -320,6 +321,10 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						flash_read.page = 0;
 						flash_read.column = 0;
 						
+						break;
+				
+				case 'i':
+						force_acq_mode = !force_acq_mode;
 						break;
 				
         default:

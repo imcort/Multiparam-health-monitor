@@ -433,6 +433,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\self_libs\pin_defines.h</FilePath>
             </File>
+            <File>
+              <FileName>data_fds.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_fds.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3981,6 +3986,11 @@
               <FileName>pin_defines.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\self_libs\pin_defines.h</FilePath>
+            </File>
+            <File>
+              <FileName>data_fds.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\self_libs\data_fds.c</FilePath>
             </File>
           </Files>
         </Group>

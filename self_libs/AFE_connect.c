@@ -82,7 +82,7 @@ void AFE_enable()
 	//	clock div 0->4Mhz, 1=2=3 -> do not use, 4-> 2Mhz, 5->1Mhz, 6->0.5Mhz, 7-> 0.25Mhz
 	AFE_Reg_Write(CLKDIV_PRF, 0); //CLKDIV Page62
 
-	set_led_currents(5, 10, 0); // parm1 -> LED1, | parm2 -> LED2, | parm3 -> LED3,    each is 6 bit resolution (0-63)
+	set_led_currents(5, 30, 0); // parm1 -> LED1, | parm2 -> LED2, | parm3 -> LED3,    each is 6 bit resolution (0-63)
 								 //For epidermal: IR,Red,Null
 	
 	set_tia_gain(1, 50);
