@@ -35,46 +35,46 @@ void AFE_enable()
 	AFE_Reg_Write(PRPCT, 39999);
 
 	//LED2
-	AFE_Reg_Write(LED2_ST, 1);
-	AFE_Reg_Write(LED2_END, 399);
+	AFE_Reg_Write(LED2_ST, 0);
+	AFE_Reg_Write(LED2_END, 398);
 	AFE_Reg_Write(SMPL_LED2_ST, 100);
-	AFE_Reg_Write(SMPL_LED2_END, 399);
-	AFE_Reg_Write(ADC_RST_P0_ST, 401);
-	AFE_Reg_Write(ADC_RST_P0_END, 407);
-	AFE_Reg_Write(LED2_CONV_ST, 409);
-	AFE_Reg_Write(LED2_CONV_END, 1468);
+	AFE_Reg_Write(SMPL_LED2_END, 398);
+	AFE_Reg_Write(ADC_RST_P0_ST, 5600);
+	AFE_Reg_Write(ADC_RST_P0_END, 5606);
+	AFE_Reg_Write(LED2_CONV_ST, 5608);
+	AFE_Reg_Write(LED2_CONV_END, 6067);
 
 	//Set 0 if LED3 is not used. LED3/ALED2
 	AFE_Reg_Write(LED3LEDSTC, 0);
 	AFE_Reg_Write(LED3LEDENDC, 0);
 
-	AFE_Reg_Write(SMPL_LED3_ST, 501);
-	AFE_Reg_Write(SMPL_LED3_END, 800);
-	AFE_Reg_Write(ADC_RST_P1_ST, 1470);
-	AFE_Reg_Write(ADC_RST_P1_END, 1476);
-	AFE_Reg_Write(LED3_CONV_ST, 1478);
-	AFE_Reg_Write(LED3_CONV_END, 2537);
+	AFE_Reg_Write(SMPL_LED3_ST, 500);
+	AFE_Reg_Write(SMPL_LED3_END, 798);
+	AFE_Reg_Write(ADC_RST_P1_ST, 6069);
+	AFE_Reg_Write(ADC_RST_P1_END, 6075);
+	AFE_Reg_Write(LED3_CONV_ST, 6077);
+	AFE_Reg_Write(LED3_CONV_END, 6536);
 
 	//LED1
-	AFE_Reg_Write(LED1_ST, 802);
-	AFE_Reg_Write(LED1_END, 1201);
-	AFE_Reg_Write(SMPL_LED1_ST, 902);
-	AFE_Reg_Write(SMPL_LED1_END, 1201);
-	AFE_Reg_Write(ADC_RST_P2_ST, 2539);
-	AFE_Reg_Write(ADC_RST_P2_END, 2545);
-	AFE_Reg_Write(LED1_CONV_ST, 2547);
-	AFE_Reg_Write(LED1_CONV_END, 3606);
+	AFE_Reg_Write(LED1_ST, 800);
+	AFE_Reg_Write(LED1_END, 1198);
+	AFE_Reg_Write(SMPL_LED1_ST, 900);
+	AFE_Reg_Write(SMPL_LED1_END, 1198);
+	AFE_Reg_Write(ADC_RST_P2_ST, 6538);
+	AFE_Reg_Write(ADC_RST_P2_END, 6544);
+	AFE_Reg_Write(LED1_CONV_ST, 6546);
+	AFE_Reg_Write(LED1_CONV_END, 7006);
 
 	//Ambient1
-	AFE_Reg_Write(SMPL_AMB1_ST, 1303);
-	AFE_Reg_Write(SMPL_AMB1_END, 1602);
-	AFE_Reg_Write(ADC_RST_P3_ST, 3608);
-	AFE_Reg_Write(ADC_RST_P3_END, 3614);
-	AFE_Reg_Write(AMB1_CONV_ST, 3616);
-	AFE_Reg_Write(AMB1_CONV_END, 4675);
+	AFE_Reg_Write(SMPL_AMB1_ST, 1300);
+	AFE_Reg_Write(SMPL_AMB1_END, 1598);
+	AFE_Reg_Write(ADC_RST_P3_ST, 7008);
+	AFE_Reg_Write(ADC_RST_P3_END, 7014);
+	AFE_Reg_Write(AMB1_CONV_ST, 7016);
+	AFE_Reg_Write(AMB1_CONV_END, 7475);
 
 	//PDNCYCLE
-	AFE_Reg_Write(PDNCYCLESTC, 5475);
+	AFE_Reg_Write(PDNCYCLESTC, 7675);
 	AFE_Reg_Write(PDNCYCLEENDC, 39199);
 
 	AFE_Reg_Write(TIM_NUMAV, 0x100 | 3); //ADC Average num 0-15 Page50
@@ -82,14 +82,14 @@ void AFE_enable()
 	//	clock div 0->4Mhz, 1=2=3 -> do not use, 4-> 2Mhz, 5->1Mhz, 6->0.5Mhz, 7-> 0.25Mhz
 	AFE_Reg_Write(CLKDIV_PRF, 0); //CLKDIV Page62
 
-	set_led_currents(5, 30, 0); // parm1 -> LED1, | parm2 -> LED2, | parm3 -> LED3,    each is 6 bit resolution (0-63)
+	set_led_currents(30, 10, 0); // parm1 -> LED1, | parm2 -> LED2, | parm3 -> LED3,    each is 6 bit resolution (0-63)
 								 //For epidermal: IR,Red,Null
 	
-	set_tia_gain(1, 50);
-	set_tia_gain(2, 500);
+	set_tia_gain(1, 50);  //IR
+	set_tia_gain(2, 250); //Red
 	
-	//DAC_settings(1, 8250);
-	//DAC_settings(2, 821);
+	//DAC_settings(1, 470);
+	//DAC_settings(2, -470);
 	
 }
 

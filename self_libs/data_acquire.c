@@ -47,7 +47,7 @@ bool is_connected = false;
 bool acq_is_working = false;
 bool flash_write_full = false;
 
-bool force_acq_mode = false;
+bool force_acq_mode = true;
 
 int16_t leads_off_volt = 0;
 
@@ -113,8 +113,7 @@ static void m_fastACQ_timer_handler(void *p_context)
 					nrf_queue_push(&rt_ppgr_queue, &val);
 				break;
 			case 4:
-				val = AFE_Reg_Read_int16(LED2VAL);
-				
+				val = AFE_Reg_Read_int16(LED2VAL); //Red
 				nrf_queue_push(&flash_ppgir_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_ppgir_queue, &val);
