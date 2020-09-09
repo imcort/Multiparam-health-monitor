@@ -82,14 +82,14 @@ void AFE_enable()
 	//	clock div 0->4Mhz, 1=2=3 -> do not use, 4-> 2Mhz, 5->1Mhz, 6->0.5Mhz, 7-> 0.25Mhz
 	AFE_Reg_Write(CLKDIV_PRF, 0); //CLKDIV Page62
 
-	set_led_currents(30, 10, 0); // parm1 -> LED1, | parm2 -> LED2, | parm3 -> LED3,    each is 6 bit resolution (0-63)
+	set_led_currents(30, 5, 0); // parm1 -> LED1, | parm2 -> LED2, | parm3 -> LED3,    each is 6 bit resolution (0-63)
 								 //For epidermal: IR,Red,Null
 	
 	set_tia_gain(1, 50);  //IR
-	set_tia_gain(2, 250); //Red
+	set_tia_gain(2, 10); //Red
 	
 	//DAC_settings(1, 470);
-	//DAC_settings(2, -470);
+	DAC_settings(2, -5600); //Red
 	
 }
 
@@ -411,7 +411,7 @@ void AFE_Reg_Write(uint8_t reg_address, uint32_t data)
 int32_t AFE_Reg_Read(uint8_t reg_address)
 {
 	uint8_t configData[3];
-	signed long retVal;
+	int32_t retVal;
 	
 	twi_readRegisters(AFE_ADDR, reg_address, configData, 3);
 

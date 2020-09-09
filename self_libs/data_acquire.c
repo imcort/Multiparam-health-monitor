@@ -107,7 +107,7 @@ static void m_fastACQ_timer_handler(void *p_context)
 					nrf_queue_push(&rt_accz_queue, &val);
 				break;
 			case 3:
-				val = AFE_Reg_Read_int16(LED1VAL);
+				val = AFE_Reg_Read_int16(LED1VAL); //IR
 				nrf_queue_push(&flash_ppgr_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_ppgr_queue, &val);
