@@ -26,7 +26,7 @@
 #define ADC_BATT_CHANNEL
 #define ADC_LEADSOFF_CHANNEL
 
-#elif NRF52832_XXAA
+#elif NRF52832_XXAA_
 
 #define BOARDS_LED						5
 
@@ -50,6 +50,31 @@
 #define ADC_TEMP_CHANNEL			NRF_SAADC_INPUT_AIN1
 #define ADC_BATT_CHANNEL			NRF_SAADC_INPUT_AIN2
 #define ADC_LEADSOFF_CHANNEL  NRF_SAADC_INPUT_AIN4
+
+#elif NRF52832_XXAA
+
+#define BOARDS_LED						16
+
+#define SPI_INSTANCE 					1
+
+#define SPI_SCK_PIN						21
+#define SPI_MOSI_PIN					18
+#define SPI_MISO_PIN					15
+#define SPI_SS_PIN						13
+
+/* TWI instance ID. */
+#define TWI_INSTANCE_ID 			0
+
+#define BOARD_SDA_PIN 				12
+#define BOARD_SCL_PIN 				10
+
+#define AFE_CS_PIN 						8
+#define LEADS_OFF_PIN 				5
+
+#define ADC_ECG_CHANNEL 			NRF_SAADC_INPUT_AIN1
+#define ADC_TEMP_CHANNEL			NRF_SAADC_INPUT_AIN0
+#define ADC_BATT_CHANNEL			NRF_SAADC_INPUT_AIN2
+#define ADC_LEADSOFF_CHANNEL  NRF_SAADC_INPUT_AIN3
 
 #endif
 

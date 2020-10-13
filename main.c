@@ -922,13 +922,13 @@ int main(void)
 		NRF_LOG_INFO("TWI_OK");
 		init_status = 1;
 		
-    AFEinit();
-		NRF_LOG_INFO("AFE_OK");
-		init_status = 2;
-		
-    MC36XXstart();
-		NRF_LOG_INFO("ACC_OK");
-		init_status = 3;
+//    AFEinit();
+//		NRF_LOG_INFO("AFE_OK");
+//		init_status = 2;
+//		
+//    MC36XXstart();
+//		NRF_LOG_INFO("ACC_OK");
+//		init_status = 3;
 		
     saadc_init();
 		NRF_LOG_INFO("SAADC_OK");

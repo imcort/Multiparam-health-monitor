@@ -14,6 +14,7 @@
 
 // Nand Flash Commands
 #define NSF_CMD_MAX_BYTES 4
+
 #define NSF_CMD_READ_ID 0x9F
 #define NSF_CMD_READ_CELL_TO_CACHE 0x13
 #define NSF_CMD_GET_FEATURE 0x0F
@@ -24,6 +25,7 @@
 #define NSF_CMD_WRITE_ENABLE 0x06
 #define NSF_CMD_BLOCK_ERASE 0xD8
 #define NSF_CMD_PROGRAM_LOAD 0x02
+#define NSF_CMD_PROGRAM_LOAD_RANDOM 0x84
 #define NSF_CMD_PROGRAM_EXECUTE 0x10
 
 // Nand Flash Status Bits
@@ -218,37 +220,60 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
     return NSF_ERR_DATA_TOO_BIG;
   }
 
-  // write enable
-  m_nsf_buffer[0] = NSF_CMD_WRITE_ENABLE;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 1, 0) != 0)
-  {
-    return NSF_ERROR_SPI;
-  }
+	if(col_address == 0)
+	{
+		// write enable
+		m_nsf_buffer[0] = NSF_CMD_WRITE_ENABLE;
+		if (m_nsf_config.spi_transfer(m_nsf_buffer, 1, 0) != 0)
+		{
+			return NSF_ERROR_SPI;
+		}
 
-  // copy buffer to nand cache
-  m_nsf_buffer[0] = NSF_CMD_PROGRAM_LOAD;
-  m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
-  m_nsf_buffer[2] = col_address; // & 0xff;
-  memcpy(&m_nsf_buffer[3], data, data_len);
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
-  {
-    return NSF_ERROR_SPI;
-  }
-
-  // program execute 0x10
-  m_nsf_buffer[0] = NSF_CMD_PROGRAM_EXECUTE;
-  m_nsf_buffer[1] = (row_address & 0xff0000) >> 16;
-  m_nsf_buffer[2] = (row_address & 0xff00) >> 8;
-  m_nsf_buffer[3] = row_address; // & 0xff;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 4, 0) != 0)
-  {
-    return NSF_ERROR_SPI;
-  }
-
-  return (nand_spi_flash_read_status() & NSF_PRG_F_MASK)
+		// copy buffer to nand cache
+		m_nsf_buffer[0] = NSF_CMD_PROGRAM_LOAD;
+		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
+		m_nsf_buffer[2] = col_address; // & 0xff;
+		memcpy(&m_nsf_buffer[3], data, data_len);
+		if (m_nsf_config.spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
+		{
+			return NSF_ERROR_SPI;
+		}
+	} else
+	{
+		// copy buffer to nand cache
+		m_nsf_buffer[0] = NSF_CMD_PROGRAM_LOAD_RANDOM;
+		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
+		m_nsf_buffer[2] = col_address; // & 0xff;
+		memcpy(&m_nsf_buffer[3], data, data_len);
+		if (m_nsf_config.spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
+		{
+			return NSF_ERROR_SPI;
+		}
+	
+	}
+  
+	if(col_address == 4080)
+	{
+		// program execute 0x10
+		m_nsf_buffer[0] = NSF_CMD_PROGRAM_EXECUTE;
+		m_nsf_buffer[1] = (row_address & 0xff0000) >> 16;
+		m_nsf_buffer[2] = (row_address & 0xff00) >> 8;
+		m_nsf_buffer[3] = row_address; // & 0xff;
+		if (m_nsf_config.spi_transfer(m_nsf_buffer, 4, 0) != 0)
+		{
+			return NSF_ERROR_SPI;
+		}
+		
+		return (nand_spi_flash_read_status() & NSF_PRG_F_MASK)
              ? NSF_ERR_ERASE
              : data_len;
+	}
+	
+	return data_len;
+  
 }
+
+
 
 //-----------------------------------------------------------------------------
 int nand_spi_flash_block_erase(uint32_t row_address)
