@@ -879,13 +879,13 @@ static void advertising_start(void)
     APP_ERROR_CHECK(err_code);
 }
 
-static void lfclk_config(void)
-{
-    ret_code_t err_code = nrf_drv_clock_init();
-    APP_ERROR_CHECK(err_code);
+//static void lfclk_config(void)
+//{
+//    ret_code_t err_code = nrf_drv_clock_init();
+//    APP_ERROR_CHECK(err_code);
 
-    nrf_drv_clock_lfclk_request(NULL);
-}
+//    nrf_drv_clock_lfclk_request(NULL);
+//}
 
 
 /**@brief Application main function.
