@@ -257,7 +257,7 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						
 						fds_stat(&stat);
 						llength = sprintf(sendbuf,
-				"init_status %d, nand block: %d, page: %d\nread block:%d, page: %d\nfds used: %d\nstarttime:%u\ncorrection:%u\n",
+				"init_status %d\nnand block: %d, page: %d\nread block:%d, page: %d\nfds used: %d\nstarttime:%u\ncorrection:%u\n",
 																			init_status,
 																			flash_offset.block, 
 																			flash_offset.page, 
@@ -284,6 +284,9 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 						flash_badblocks.bad_block_num = 0;
 				
 						flash_write_full = false;
+				
+						llength = sprintf(sendbuf,"Memory cleared.");
+						ble_nus_data_send(&m_nus, (uint8_t *)sendbuf, &llength, m_conn_handle);
 
             break;
 				case 'e':
@@ -922,13 +925,13 @@ int main(void)
 		NRF_LOG_INFO("TWI_OK");
 		init_status = 1;
 		
-//    AFEinit();
-//		NRF_LOG_INFO("AFE_OK");
-//		init_status = 2;
-//		
-//    MC36XXstart();
-//		NRF_LOG_INFO("ACC_OK");
-//		init_status = 3;
+    AFEinit();
+		NRF_LOG_INFO("AFE_OK");
+		init_status = 2;
+		
+    MC36XXstart();
+		NRF_LOG_INFO("ACC_OK");
+		init_status = 3;
 		
     saadc_init();
 		NRF_LOG_INFO("SAADC_OK");

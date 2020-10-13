@@ -216,7 +216,7 @@ void DAC_settings(uint8_t led, int16_t nA)
 		reg_val |= 0x10;
 	}
 	
-	NRF_LOG_INFO("%d",reg_val&0xf);
+	//NRF_LOG_INFO("%d",reg_val&0xf);
 	
 	if(led == 3){
 		dac_val &= (~0x1f);

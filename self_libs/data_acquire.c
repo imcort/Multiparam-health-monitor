@@ -89,31 +89,31 @@ static void m_fastACQ_timer_handler(void *p_context)
 	
 		switch(state_counter){
 			case 0:
-				//val = MC36XXreadXAccel();
+				val = MC36XXreadXAccel();
 				nrf_queue_push(&flash_accx_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_accx_queue, &val);
 				break;
 			case 1:
-				//val = MC36XXreadYAccel();
+				val = MC36XXreadYAccel();
 				nrf_queue_push(&flash_accy_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_accy_queue, &val);
 				break;
 			case 2:
-				//val = MC36XXreadZAccel();
+				val = MC36XXreadZAccel();
 				nrf_queue_push(&flash_accz_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_accz_queue, &val);
 				break;
 			case 3:
-				//val = AFE_Reg_Read_int16(LED1VAL); //IR
+				val = AFE_Reg_Read_int16(LED1VAL); //IR
 				nrf_queue_push(&flash_ppgr_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_ppgr_queue, &val);
 				break;
 			case 4:
-				//val = AFE_Reg_Read_int16(LED2VAL); //Red
+				val = AFE_Reg_Read_int16(LED2VAL); //Red
 				nrf_queue_push(&flash_ppgir_queue, &val);
 				if(in_rt_mode)
 					nrf_queue_push(&rt_ppgir_queue, &val);
@@ -143,8 +143,8 @@ static void m_slowACQ_timer_handler(void *p_context)
 	
 		if((leads_off_volt == 0) && (!acq_is_working)) {
 				
-				//MC36XXSetMode(MC36XX_MODE_CWAKE);
-				//AFE_enable();
+				MC36XXSetMode(MC36XX_MODE_CWAKE);
+				AFE_enable();
 				err_code = app_timer_start(fastACQ_timer, APP_TIMER_TICKS(2), NULL); 		//500Hz ECG, ACC, SpO2
 				APP_ERROR_CHECK(err_code);
 				acq_is_working = true;
@@ -196,8 +196,8 @@ void timers_start(void)
     err_code = app_timer_start(slowACQ_timer, APP_TIMER_TICKS(1000), NULL); 	//1Hz Bodytemp, Battery
     APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
-    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_start(log_timer, APP_TIMER_TICKS(1000), NULL);
+//    APP_ERROR_CHECK(err_code);
 }
 
 static void saadc_callback(nrf_drv_saadc_evt_t const *p_event)

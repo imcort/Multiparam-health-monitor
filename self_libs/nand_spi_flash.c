@@ -3,6 +3,8 @@
 #include "stdlib.h"
 #include "string.h"
 
+#include "nrf_log.h"
+
 // Device Codes
 #define NSF_DEVICE_TOSHIBA_TC58CVx 0x98
 #define NSF_DEVICE_TC58CVG2S0HxAIx 0xCD // 4Gb
@@ -223,6 +225,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 	if(col_address == 0)
 	{
 		// write enable
+		//NRF_LOG_INFO("flash write en.");
 		m_nsf_buffer[0] = NSF_CMD_WRITE_ENABLE;
 		if (m_nsf_config.spi_transfer(m_nsf_buffer, 1, 0) != 0)
 		{
@@ -230,6 +233,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		}
 
 		// copy buffer to nand cache
+		//NRF_LOG_INFO("flash program load.");
 		m_nsf_buffer[0] = NSF_CMD_PROGRAM_LOAD;
 		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
 		m_nsf_buffer[2] = col_address; // & 0xff;
@@ -241,6 +245,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 	} else
 	{
 		// copy buffer to nand cache
+		//NRF_LOG_INFO("flash program load random.");
 		m_nsf_buffer[0] = NSF_CMD_PROGRAM_LOAD_RANDOM;
 		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
 		m_nsf_buffer[2] = col_address; // & 0xff;
@@ -255,6 +260,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 	if(col_address == 4080)
 	{
 		// program execute 0x10
+		//NRF_LOG_INFO("flash program load execute.");
 		m_nsf_buffer[0] = NSF_CMD_PROGRAM_EXECUTE;
 		m_nsf_buffer[1] = (row_address & 0xff0000) >> 16;
 		m_nsf_buffer[2] = (row_address & 0xff00) >> 8;
