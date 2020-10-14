@@ -917,7 +917,7 @@ int main(void)
 
     // Start execution.
     NRF_LOG_INFO("Debug logging for UART over RTT started.");
-		NRF_LOG_FLUSH();
+		
 	
     advertising_start();
 
@@ -940,7 +940,7 @@ int main(void)
 		nand_flash_prepare();
 		NRF_LOG_INFO("NAND_OK");
 		init_status = 5;
-		
+		NRF_LOG_FLUSH();	
     fds_prepare();
 		NRF_LOG_INFO("FDS_OK");
 		init_status = 6;
