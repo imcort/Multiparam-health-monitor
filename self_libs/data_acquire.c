@@ -47,7 +47,7 @@ bool is_connected = false;
 bool acq_is_working = false;
 bool flash_write_full = false;
 
-bool force_acq_mode = true;
+bool force_acq_mode = false;
 
 int16_t leads_off_volt = 0;
 
