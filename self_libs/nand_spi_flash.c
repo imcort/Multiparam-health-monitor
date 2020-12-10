@@ -5,6 +5,50 @@
 
 #include "nrf_log.h"
 
+//------------------------------------------------------------
+#include "nrf_drv_spi.h"
+#include "custom_board.h"
+#include "nrf_pwr_mgmt.h"
+#include "nrf_delay.h"
+
+static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE);
+static volatile bool spi_xfer_done = true;
+
+static void spi_event_handler(nrf_drv_spi_evt_t const *p_event, void *p_context)
+{
+    spi_xfer_done = true;
+}
+
+static void nand_spi_init(void)
+{
+
+    nrf_drv_spi_config_t spi_config = {
+        .sck_pin = SPI_SCK_PIN,
+        .mosi_pin = SPI_MOSI_PIN,
+        .miso_pin = SPI_MISO_PIN,
+        .ss_pin = SPI_SS_PIN,
+        .irq_priority = SPI_DEFAULT_CONFIG_IRQ_PRIORITY,
+        .orc = 0x00,
+        .frequency = NRF_DRV_SPI_FREQ_8M,
+        .mode = NRF_DRV_SPI_MODE_0,
+        .bit_order = NRF_DRV_SPI_BIT_ORDER_MSB_FIRST,
+    };
+
+    APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, spi_event_handler, NULL));
+}
+
+static int nand_spi_transfer(uint8_t *buffer, uint16_t tx_len, uint16_t rx_len)
+{
+
+    spi_xfer_done = false;
+	
+    APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, buffer, tx_len, buffer, tx_len + rx_len));
+
+    while (!spi_xfer_done) nrf_pwr_mgmt_run();
+		
+    return NSF_ERR_OK;
+}
+
 // Device Codes
 #define NSF_DEVICE_TOSHIBA_TC58CVx 0x98
 #define NSF_DEVICE_TC58CVG2S0HxAIx 0xCD // 4Gb
@@ -42,7 +86,7 @@
 #define NSF_RESET_TIME_MS 7
 
 // config instance
-static nand_spi_flash_config_t m_nsf_config;
+//static nand_spi_flash_config_t m_nsf_config;
 
 // spi read/write buffer
 static uint8_t m_nsf_buffer[255];
@@ -71,24 +115,25 @@ uint16_t nand_spi_flash_blocks_count()
 }
 
 //-----------------------------------------------------------------------------
-int nand_spi_flash_init(const nand_spi_flash_config_t *config)
+int nand_spi_flash_init(void)
 {
   // check spi driver already inited and copy config
-  m_nsf_config = *config;
+  //m_nsf_config = *config;
+	nand_spi_init();
 
   //Disable HSE Mode
   m_nsf_buffer[0] = 0x1F;
   m_nsf_buffer[1] = 0xB0;
   m_nsf_buffer[2] = 0x00;
 
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 3, 0) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 3, 0) != 0)
   {
     return NSF_ERROR_SPI;
   }
 
   // identify device
   m_nsf_buffer[0] = NSF_CMD_READ_ID;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 2, 2) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 2, 2) != 0)
   {
     return NSF_ERROR_SPI;
   }
@@ -140,10 +185,10 @@ uint8_t nand_spi_flash_read_status()
   m_nsf_buffer[2] = NSF_OIP_MASK;
   while (m_nsf_buffer[2] & NSF_OIP_MASK)
   {
-    m_nsf_config.delay_us(NSF_PAGE_READ_TIME_US);
+    nrf_delay_us(NSF_PAGE_READ_TIME_US);
     m_nsf_buffer[0] = NSF_CMD_GET_FEATURE;
     m_nsf_buffer[1] = NSF_CMD_FEATURE_STATUS;
-    m_nsf_config.spi_transfer(m_nsf_buffer, 2, 1);
+    nand_spi_transfer(m_nsf_buffer, 2, 1);
   }
   return m_nsf_buffer[2];
 }
@@ -163,7 +208,7 @@ int nand_spi_flash_page_read(uint32_t row_address, uint16_t col_address,
   m_nsf_buffer[1] = (row_address & 0xff0000) >> 16;
   m_nsf_buffer[2] = (row_address & 0xff00) >> 8;
   m_nsf_buffer[3] = row_address; // & 0xff;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 4, 0) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 4, 0) != 0)
   {
     return NSF_ERROR_SPI;
   }
@@ -179,7 +224,7 @@ int nand_spi_flash_page_read(uint32_t row_address, uint16_t col_address,
   m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
   m_nsf_buffer[2] = col_address; // & 0xff;
   m_nsf_buffer[3] = 0x00;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 4, read_len) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 4, read_len) != 0)
   {
     return NSF_ERROR_SPI;
   }
@@ -195,7 +240,7 @@ int nand_spi_flash_reset_unlock()
 {
   // reset device
   m_nsf_buffer[0] = NSF_CMD_RESET;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 1, 0) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 1, 0) != 0)
   {
     return NSF_ERROR_SPI;
   }
@@ -205,7 +250,7 @@ int nand_spi_flash_reset_unlock()
   m_nsf_buffer[0] = NSF_CMD_SET_FEATURE;
   m_nsf_buffer[1] = NSF_CMD_FEATURE_LOCK;
   m_nsf_buffer[2] = 0x00;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 3, 0) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 3, 0) != 0)
   {
     return NSF_ERROR_SPI;
   }
@@ -227,7 +272,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		// write enable
 		//NRF_LOG_INFO("flash write en.");
 		m_nsf_buffer[0] = NSF_CMD_WRITE_ENABLE;
-		if (m_nsf_config.spi_transfer(m_nsf_buffer, 1, 0) != 0)
+		if (nand_spi_transfer(m_nsf_buffer, 1, 0) != 0)
 		{
 			return NSF_ERROR_SPI;
 		}
@@ -238,7 +283,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
 		m_nsf_buffer[2] = col_address; // & 0xff;
 		memcpy(&m_nsf_buffer[3], data, data_len);
-		if (m_nsf_config.spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
+		if (nand_spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
 		{
 			return NSF_ERROR_SPI;
 		}
@@ -250,7 +295,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
 		m_nsf_buffer[2] = col_address; // & 0xff;
 		memcpy(&m_nsf_buffer[3], data, data_len);
-		if (m_nsf_config.spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
+		if (nand_spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
 		{
 			return NSF_ERROR_SPI;
 		}
@@ -265,7 +310,7 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		m_nsf_buffer[1] = (row_address & 0xff0000) >> 16;
 		m_nsf_buffer[2] = (row_address & 0xff00) >> 8;
 		m_nsf_buffer[3] = row_address; // & 0xff;
-		if (m_nsf_config.spi_transfer(m_nsf_buffer, 4, 0) != 0)
+		if (nand_spi_transfer(m_nsf_buffer, 4, 0) != 0)
 		{
 			return NSF_ERROR_SPI;
 		}
@@ -286,7 +331,7 @@ int nand_spi_flash_block_erase(uint32_t row_address)
 {
   // enable write
   m_nsf_buffer[0] = NSF_CMD_WRITE_ENABLE;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 1, 0) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 1, 0) != 0)
   {
     return NSF_ERROR_SPI;
   }
@@ -296,7 +341,7 @@ int nand_spi_flash_block_erase(uint32_t row_address)
   m_nsf_buffer[1] = (row_address & 0xff0000) >> 16;
   m_nsf_buffer[2] = (row_address & 0xff00) >> 8;
   m_nsf_buffer[3] = row_address; // & 0xff;
-  if (m_nsf_config.spi_transfer(m_nsf_buffer, 4, 0) != 0)
+  if (nand_spi_transfer(m_nsf_buffer, 4, 0) != 0)
   {
     return NSF_ERROR_SPI;
   }

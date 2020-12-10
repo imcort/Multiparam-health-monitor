@@ -47,7 +47,7 @@ bool is_connected = false;
 bool acq_is_working = false;
 bool flash_write_full = false;
 
-bool force_acq_mode = true;
+bool force_acq_mode = false;
 
 int16_t leads_off_volt = 0;
 
@@ -340,7 +340,7 @@ void nand_flash_data_write(void)
 								
 								ret = app_timer_stop(fastACQ_timer); 		//500Hz ECG, ACC, SpO2
 								APP_ERROR_CHECK(ret);
-								MC36XXSetMode(MC36XX_MODE_STANDBY);
+								MC36XXSetMode(MC36XX_MODE_SLEEP);
 								AFE_shutdown();
 								acq_is_working = false;
 							

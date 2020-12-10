@@ -44,7 +44,7 @@ uint16_t nand_spi_flash_blocks_count(void);
 
 // Init driver
 // @returns 0 on success, negative error code on error
-int nand_spi_flash_init(const nand_spi_flash_config_t * config);
+int nand_spi_flash_init(void);
 
 // Reset and unlock flash device
 int nand_spi_flash_reset_unlock(void);
