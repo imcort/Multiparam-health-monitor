@@ -936,8 +936,8 @@ int main(void)
 		NRF_LOG_INFO("SAADC_OK");
 		init_status = 4;
 		
-		nand_spi_flash_init();
-		NRF_LOG_INFO("NAND_OK");
+		int errid = nand_spi_flash_init();
+		NRF_LOG_INFO("NAND_OK:%s",nand_spi_flash_str_error(errid));
 		init_status = 5;
 		
     fds_prepare();
