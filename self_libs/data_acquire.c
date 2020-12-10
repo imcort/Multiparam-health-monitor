@@ -11,7 +11,7 @@
 #include "nand_spi_flash.h"
 #include "data_storage.h"
 #include "ble_nus.h"
-#include "pin_defines.h"
+#include "custom_board.h"
 #include "data_fds.h"
 
 #define QUEUE_SIZE 12

@@ -9,7 +9,7 @@
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
-#include "pin_defines.h"
+#include "custom_board.h"
 
 static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE);
 static volatile bool spi_xfer_done = true;

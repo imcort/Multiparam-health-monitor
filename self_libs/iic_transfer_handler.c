@@ -1,6 +1,6 @@
 #include "iic_transfer_handler.h"
 #include "nrf_pwr_mgmt.h"
-#include "pin_defines.h"
+#include "custom_board.h"
 
 /* Indicates if operation on TWI has ended. */
 static volatile bool m_xfer_done = false;
@@ -49,7 +49,7 @@ void twi_init(void)
 		.sda = BOARD_SDA_PIN,
 		.frequency = NRF_DRV_TWI_FREQ_100K,
 		.interrupt_priority = APP_IRQ_PRIORITY_HIGH,
-		.clear_bus_init = false
+		.clear_bus_init = true
 	};
 
 	err_code = nrf_drv_twi_init(&m_twi, &twi_afe_config, twi_handler, NULL);
