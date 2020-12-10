@@ -5,13 +5,31 @@
 
 #include <stdint.h>
 
-// NAND SPI Flash configuration 
-typedef struct nand_spi_flash_config_t {
-  // SPI transfer function
-  int (*spi_transfer)(uint8_t * buffer, uint16_t tx_len, uint16_t rx_len);
-  // delay microseconds function
-  void(*delay_us)(uint32_t delay);
-} nand_spi_flash_config_t;
+//// NAND SPI Flash configuration 
+//typedef struct nand_spi_flash_config_t {
+//  // SPI transfer function
+//  int (*spi_transfer)(uint8_t * buffer, uint16_t tx_len, uint16_t rx_len);
+//  // delay microseconds function
+//  void(*delay_us)(uint32_t delay);
+//} nand_spi_flash_config_t;
+
+typedef struct
+{
+
+    uint16_t column;
+    uint16_t page;
+    uint16_t block;
+		uint16_t __not_used_;
+
+} nand_flash_addr_t;
+
+typedef struct
+{
+
+    uint16_t bad_blocks[40];
+		uint16_t bad_block_num;
+
+} nand_flash_badblocks_t;
 
 // Possible error codes, these are negative to allow
 // valid positive return values

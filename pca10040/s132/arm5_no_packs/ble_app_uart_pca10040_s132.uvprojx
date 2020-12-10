@@ -403,11 +403,6 @@
               <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
             </File>
             <File>
-              <FileName>data_storage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\data_storage.c</FilePath>
-            </File>
-            <File>
               <FileName>iic_transfer_handler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\self_libs\iic_transfer_handler.c</FilePath>
@@ -3949,11 +3944,6 @@
               <FileName>data_acquire.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\self_libs\data_acquire.c</FilePath>
-            </File>
-            <File>
-              <FileName>data_storage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\self_libs\data_storage.c</FilePath>
             </File>
             <File>
               <FileName>iic_transfer_handler.c</FileName>

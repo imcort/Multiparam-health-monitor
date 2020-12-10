@@ -1,6 +1,6 @@
 #include "data_fds.h"
 
-#include "data_storage.h"
+#include "nand_spi_flash.h"
 
 #include "fds.h"
 #include "nrf_pwr_mgmt.h"

@@ -76,7 +76,6 @@
 #include "iic_transfer_handler.h"
 #include "AFE_connect.h"
 #include "MC36XX.h"
-#include "data_storage.h"
 #include "nrf_drv_saadc.h"
 #include "data_fds.h"
 #include <math.h>
@@ -937,7 +936,7 @@ int main(void)
 		NRF_LOG_INFO("SAADC_OK");
 		init_status = 4;
 		
-		nand_flash_prepare();
+		nand_spi_flash_init();
 		NRF_LOG_INFO("NAND_OK");
 		init_status = 5;
 		

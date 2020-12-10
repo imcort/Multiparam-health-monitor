@@ -9,7 +9,6 @@
 #include "nrf_log.h"
 #include "fds.h"
 #include "nand_spi_flash.h"
-#include "data_storage.h"
 #include "ble_nus.h"
 #include "custom_board.h"
 #include "data_fds.h"

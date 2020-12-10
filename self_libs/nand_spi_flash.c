@@ -176,7 +176,8 @@ int nand_spi_flash_init(void)
   {
     return NSF_ERR_UNKNOWN_DEVICE;
   }
-	return NSF_ERR_OK;
+	
+	return nand_spi_flash_reset_unlock();
 }
 
 //-----------------------------------------------------------------------------
