@@ -46,7 +46,7 @@ bool is_connected = false;
 bool acq_is_working = false;
 bool flash_write_full = false;
 
-bool force_acq_mode = false;
+bool force_acq_mode = true;
 
 int16_t leads_off_volt = 0;
 
@@ -311,7 +311,7 @@ void nand_flash_data_write(void)
             }
 
             errid = nand_spi_flash_page_write((flash_offset.block << 6) | flash_offset.page, flash_offset.column, (uint8_t *)flash_write_buffer, 240);
-            //NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 240, nand_spi_flash_str_error(errid));
+            NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 240, nand_spi_flash_str_error(errid));
             flash_offset.column += 240;
             flash_write_data_offset = 0;
         }
@@ -329,7 +329,7 @@ void nand_flash_data_write(void)
 					
             //*(uint32_t *)&flash_write_buffer[70] = millis;  //4221-4224
             errid = nand_spi_flash_page_write((flash_offset.block << 6) | flash_offset.page, flash_offset.column, (uint8_t *)flash_write_buffer, 132);
-            //NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 144, nand_spi_flash_str_error(errid));
+            NRF_LOG_INFO("Writing block %d, page %d, column %d, size %d, %s", flash_offset.block, flash_offset.page, flash_offset.column, 144, nand_spi_flash_str_error(errid));
             flash_offset.column = 0;
             flash_write_data_offset = 0;
             flash_offset.page++;

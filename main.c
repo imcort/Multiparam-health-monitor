@@ -938,6 +938,7 @@ int main(void)
 		
 		int errid = nand_spi_flash_init();
 		NRF_LOG_INFO("NAND_OK:%s",nand_spi_flash_str_error(errid));
+		nand_spi_flash_write_enable();
 		init_status = 5;
 		
     fds_prepare();

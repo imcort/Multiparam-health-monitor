@@ -77,6 +77,8 @@ uint8_t nand_spi_flash_read_status(void);
 int nand_spi_flash_page_read(uint32_t row_address, uint16_t col_address, 
   uint8_t * data, uint16_t read_len);
 
+int nand_spi_flash_write_enable(void);
+
 // Page write
 // @row_address is block_address (first 18 bits) + page_address (6 bits)
 // @col_address is the byte address in the page
