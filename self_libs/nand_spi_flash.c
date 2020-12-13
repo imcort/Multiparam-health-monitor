@@ -39,7 +39,8 @@ static void nand_spi_init(void)
 
 static int nand_spi_transfer(uint8_t *buffer, uint16_t tx_len, uint16_t rx_len)
 {
-
+		while (!spi_xfer_done) nrf_pwr_mgmt_run();
+	
     spi_xfer_done = false;
 	
     APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, buffer, tx_len, buffer, tx_len + rx_len));
@@ -290,11 +291,16 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
 		m_nsf_buffer[2] = col_address; // & 0xff;
 		
+		while (!spi_xfer_done) nrf_pwr_mgmt_run();
 		memcpy(&m_nsf_buffer[3], data, data_len);
-		if (nand_spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
-		{
-			return NSF_ERROR_SPI;
-		}
+//		if (nand_spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
+//		{
+//			return NSF_ERROR_SPI;
+//		}
+		spi_xfer_done = false;
+    APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_nsf_buffer, data_len + 3, NULL, 0));
+
+    
 	} else
 	{
 		// copy buffer to nand cache
@@ -303,11 +309,14 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		m_nsf_buffer[1] = (col_address & 0xff00) >> 8;
 		m_nsf_buffer[2] = col_address; // & 0xff;
 		
+		while (!spi_xfer_done) nrf_pwr_mgmt_run();
 		memcpy(&m_nsf_buffer[3], data, data_len);
-		if (nand_spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
-		{
-			return NSF_ERROR_SPI;
-		}
+//		if (nand_spi_transfer(m_nsf_buffer, data_len + 3, 0) != 0)
+//		{
+//			return NSF_ERROR_SPI;
+//		}
+		spi_xfer_done = false;
+    APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_nsf_buffer, data_len + 3, NULL, 0));
 	
 	}
   
@@ -319,10 +328,13 @@ int nand_spi_flash_page_write(uint32_t row_address, uint16_t col_address,
 		m_nsf_buffer[1] = (row_address & 0xff0000) >> 16;
 		m_nsf_buffer[2] = (row_address & 0xff00) >> 8;
 		m_nsf_buffer[3] = row_address; // & 0xff;
-		if (nand_spi_transfer(m_nsf_buffer, 4, 0) != 0)
-		{
-			return NSF_ERROR_SPI;
-		}
+//		if (nand_spi_transfer(m_nsf_buffer, 4, 0) != 0)
+//		{
+//			return NSF_ERROR_SPI;
+//		}
+		while (!spi_xfer_done) nrf_pwr_mgmt_run();
+		spi_xfer_done = false;
+    APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_nsf_buffer, 4, NULL, 0));
 		
 		return (nand_spi_flash_read_status() & NSF_PRG_F_MASK)
              ? NSF_ERR_ERASE
