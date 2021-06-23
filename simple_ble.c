@@ -553,3 +553,10 @@ void simple_ble_init(void * nus_data_handler)
     conn_params_init();
 
 }
+
+ret_code_t ble_data_send(uint8_t* sendbuf, uint16_t llength)
+{
+	
+    return ble_nus_data_send(&m_nus, (uint8_t *)sendbuf, &llength, m_conn_handle);
+
+}

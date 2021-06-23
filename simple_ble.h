@@ -30,4 +30,6 @@ void bsp_event_handler(bsp_event_t event);
 void simple_ble_init(void * nus_data_handler);
 void advertising_start(void);
 
+ret_code_t ble_data_send(uint8_t* sendbuf, uint16_t llength);
+
 #endif
