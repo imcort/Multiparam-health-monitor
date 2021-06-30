@@ -5899,7 +5899,7 @@
  
 
 #ifndef UART_EASY_DMA_SUPPORT
-#define UART_EASY_DMA_SUPPORT 1
+#define UART_EASY_DMA_SUPPORT 0
 #endif
 
 // <q> UART_LEGACY_SUPPORT  - Driver supporting Legacy mode
@@ -5918,7 +5918,7 @@
  
 
 #ifndef UART0_CONFIG_USE_EASY_DMA
-#define UART0_CONFIG_USE_EASY_DMA 1
+#define UART0_CONFIG_USE_EASY_DMA 0
 #endif
 
 // </e>
