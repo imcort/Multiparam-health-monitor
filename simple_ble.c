@@ -11,7 +11,7 @@
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
 
-#define APP_ADV_DURATION                18000                                       /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
+#define APP_ADV_DURATION                0                                       /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
 #define MIN_CONN_INTERVAL               MSEC_TO_UNITS(20, UNIT_1_25_MS)             /**< Minimum acceptable connection interval (20 ms), Connection interval uses 1.25 ms units. */
 #define MAX_CONN_INTERVAL               MSEC_TO_UNITS(75, UNIT_1_25_MS)             /**< Maximum acceptable connection interval (75 ms), Connection interval uses 1.25 ms units. */
@@ -257,26 +257,26 @@ static void services_init(void * nus_data_handler)
     uint32_t           err_code;
     ble_nus_init_t     nus_init;
     nrf_ble_qwr_init_t qwr_init = {0};
-		ble_dfu_buttonless_init_t dfus_init = {0};
+	ble_dfu_buttonless_init_t dfus_init = {0};
 
     // Initialize Queued Write Module.
     qwr_init.error_handler = nrf_qwr_error_handler;
 
     err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
     APP_ERROR_CHECK(err_code);
-		
-		// Initialize DFU.
-		dfus_init.evt_handler = ble_dfu_evt_handler;
-
-    err_code = ble_dfu_buttonless_init(&dfus_init);
-    APP_ERROR_CHECK(err_code);
-
+        
     // Initialize NUS.
     memset(&nus_init, 0, sizeof(nus_init));
 
     nus_init.data_handler = nus_data_handler;
 
     err_code = ble_nus_init(&m_nus, &nus_init);
+    APP_ERROR_CHECK(err_code);
+        
+    // Initialize DFU.
+    dfus_init.evt_handler = ble_dfu_evt_handler;
+
+    err_code = ble_dfu_buttonless_init(&dfus_init);
     APP_ERROR_CHECK(err_code);
 }
 

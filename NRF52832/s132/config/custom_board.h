@@ -40,17 +40,13 @@
 #ifndef PCA10040_H
 #define PCA10040_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "nrf_gpio.h"
 
 // LEDs definitions for Board
 #define LEDS_NUMBER    1
 
-#define LED_1          17
-#define LEDS_ACTIVE_STATE 0
+#define LED_1          21
+#define LEDS_ACTIVE_STATE 1
 #define LEDS_LIST { LED_1 }
 //#define BSP_LED_0      LED_1
 
@@ -63,11 +59,18 @@ extern "C" {
 #define IIC_SDA   30
 #define IIC_SCL   8
 
+#define AFE4404_CS 6
 
+#define USE_SPI
 
+#define SPI_PIN_SCK				14
+#define SPI_PIN_MOSI			12
+#define SPI_PIN_MISO			15
 
-#ifdef __cplusplus
-}
-#endif
+#define SPI_NAND_FLASH_CS       16
+
+#define USE_UART
+#define BMD101_TX 29
+#define BMD101_CS 28
 
 #endif // PCA10040_H

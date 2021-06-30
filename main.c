@@ -66,17 +66,22 @@
 
 #include "simple_ble.h"
 
-#include "MC36XX.h"
+#include "time_manager.h"
+#include "mc3672.h"
+#include "afe4404.h"
+#include "bmd101.h"
+#include "nand_spi_flash.h"
 
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
-APP_TIMER_DEF(millis_timer);
+APP_TIMER_DEF(test_timer);
 
-static void m_millis_timer_handler(void *p_context)
+static void test_timer_handler(void *p_context)
 {
     char sendbuf[200];
-    int len = sprintf(sendbuf,"x:%d,y:%d,z:%d",MC36XXreadXAccel(),MC36XXreadYAccel(),MC36XXreadZAccel());
+    int len = sprintf(sendbuf,"%d,%d,%d,%d,%d\r\n",mc3672_readXAccel(),mc3672_readYAccel(),mc3672_readZAccel(),bmd101_getECG(),time_s_get());
     ble_data_send((uint8_t*)sendbuf, len);
+    Debug("%s",sendbuf);
 }
 
 /**@brief Function for assert macro callback.
@@ -102,11 +107,6 @@ static void timers_init(void)
     ret_code_t err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
     
-    err_code = app_timer_create(&millis_timer, APP_TIMER_MODE_REPEATED, m_millis_timer_handler);
-    APP_ERROR_CHECK(err_code);
-    
-    err_code = app_timer_start(millis_timer, APP_TIMER_TICKS(1000), NULL);
-    APP_ERROR_CHECK(err_code);
 }
 
 /**@brief Function for handling the data from the Nordic UART Service.
@@ -119,12 +119,24 @@ static void timers_init(void)
 /**@snippet [Handling the data received over BLE] */
 static void nus_data_handler(ble_nus_evt_t * p_evt)
 {
-
+    uint32_t time_set;
+    
+    
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
 
-        NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.");
-        NRF_LOG_HEXDUMP_DEBUG(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
+        NRF_LOG_INFO("Received data from BLE NUS. Writing data on UART.");
+        NRF_LOG_HEXDUMP_INFO(p_evt->params.rx_data.p_data, p_evt->params.rx_data.length);
+        
+        switch (p_evt->params.rx_data.p_data[0])
+        {
+            case 'g':
+                sscanf((const char *)(p_evt->params.rx_data.p_data) + 1, "%u", &time_set);
+                time_calibrate(time_set);
+                break;
+            default:
+                break;
+        }
 
     }
 
@@ -184,7 +196,18 @@ static void idle_state_handle(void)
     }
 }
 
+void test_timer_begin(void)
+{
+    
+    ret_code_t err_code;
+    
+    err_code = app_timer_create(&test_timer, APP_TIMER_MODE_REPEATED, test_timer_handler);
+    APP_ERROR_CHECK(err_code);
+    
+    err_code = app_timer_start(test_timer, APP_TIMER_TICKS(5), NULL);
+    APP_ERROR_CHECK(err_code);
 
+}
 
 
 /**@brief Application main function.
@@ -193,11 +216,22 @@ int main(void)
 {
     bool erase_bonds;
 		
-	APP_ERROR_CHECK(ble_dfu_buttonless_async_svci_init());  //Enable in Release
+	//APP_ERROR_CHECK(ble_dfu_buttonless_async_svci_init());  //Enable in Release
     // Initialize.
     log_init();
-    MC36XXstart();
     timers_init();
+    
+    time_manager_begin();
+    mc3672_begin();
+    //mc3672_sleep();
+    afe4404_begin();
+    //afe4404_sleep();
+    bmd101_begin();
+    
+    nand_spi_flash_init();
+    
+    test_timer_begin();
+    
     buttons_leds_init(&erase_bonds);
     power_management_init();
 	
@@ -213,6 +247,7 @@ int main(void)
     {
         idle_state_handle();
     }
+    
 }
 
 
