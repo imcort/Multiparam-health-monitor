@@ -209,6 +209,73 @@ void test_timer_begin(void)
 
 }
 
+int test_row_addr = 0;
+
+void nand_flash_test(void)
+{
+    int errid = 0;
+    
+    Debug("Test in progress.");
+    static uint8_t test_buffer[NAND_FLASH_PER_PAGE_SIZE];
+    
+    Debug("Generating test data.");
+    NRF_LOG_FLUSH();
+    for(int i=0; i < NAND_FLASH_PER_PAGE_SIZE; i++)
+    {
+    
+        test_buffer[i] = mc3672_readXAccel();
+        delay(2);
+    
+    }
+    Debug("Generated. Erasing nand block.");
+    NRF_LOG_FLUSH();
+    errid = nand_spi_flash_block_erase(test_row_addr);
+    if (errid == NSF_ERR_ERASE)
+    {
+        Debug("Found bad block.");
+        return;
+    }
+    
+    Debug("Executing write progress");
+    NRF_LOG_FLUSH();
+    for(int i=0; i < 11; i++)
+    {
+    
+        errid = nand_spi_flash_page_write(test_row_addr, i * 192, test_buffer + i * 192, 192);
+        NRF_LOG_INFO("%d, %s", i, nand_spi_flash_str_error(errid));
+        NRF_LOG_HEXDUMP_INFO(test_buffer + i * 192, 10);
+    
+    }
+    
+    Debug("Executing read progress");
+    NRF_LOG_FLUSH();
+    static uint8_t read_buffer[NAND_FLASH_PER_PAGE_SIZE];
+    
+    for(int i=0; i < 11; i++)
+    {
+    
+        errid = nand_spi_flash_page_read(test_row_addr, i * 192, read_buffer + i * 192, 192);
+        NRF_LOG_INFO("%d, %s", i, nand_spi_flash_str_error(errid));
+        NRF_LOG_HEXDUMP_INFO(read_buffer + i * 192, 10);
+    }
+    
+    Debug("Comparing.");
+    for(int i=0; i < NAND_FLASH_PER_PAGE_SIZE; i++)
+    {
+    
+        if(test_buffer[i] - read_buffer[i])
+        {
+            Debug("Data corrupt at column %d", i);
+            return;
+        }
+            
+    
+    }
+    
+    Debug("End");
+
+}
+
 
 /**@brief Application main function.
  */
@@ -225,12 +292,13 @@ int main(void)
     mc3672_begin();
     //mc3672_sleep();
     afe4404_begin();
-    //afe4404_sleep();
+    afe4404_sleep();
     bmd101_begin();
+    bmd101_sleep();
     
     nand_spi_flash_init();
-    
-    test_timer_begin();
+    nand_flash_test();
+    //test_timer_begin();
     
     buttons_leds_init(&erase_bonds);
     power_management_init();
