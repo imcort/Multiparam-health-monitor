@@ -1,7 +1,5 @@
 #include "simple_ble.h"
 
-
-
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
 #define DEVICE_NAME                     "Nordic_Template"                               /**< Name of device. Will be included in the advertising data. */
@@ -250,9 +248,11 @@ static void ble_dfu_evt_handler(ble_dfu_buttonless_evt_type_t event)
     }
 }
 
+void nus_data_handler(ble_nus_evt_t * p_evt);
+
 /**@brief Function for initializing services that will be used by the application.
  */
-static void services_init(void * nus_data_handler)
+static void services_init(void)
 {
     uint32_t           err_code;
     ble_nus_init_t     nus_init;
@@ -542,13 +542,13 @@ void bsp_event_handler(bsp_event_t event)
     }
 }
 
-void simple_ble_init(void * nus_data_handler)
+void simple_ble_init(void)
 {
 	
     ble_stack_init();
     gap_params_init();
     gatt_init();
-    services_init(nus_data_handler);
+    services_init();
     advertising_init();
     conn_params_init();
 

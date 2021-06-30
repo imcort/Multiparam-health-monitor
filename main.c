@@ -117,7 +117,7 @@ static void timers_init(void)
  * @param[in] p_evt       Nordic UART Service event.
  */
 /**@snippet [Handling the data received over BLE] */
-static void nus_data_handler(ble_nus_evt_t * p_evt)
+void nus_data_handler(ble_nus_evt_t * p_evt)
 {
     uint32_t time_set;
     
@@ -236,7 +236,7 @@ int main(void)
     power_management_init();
 	
 	sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
-	simple_ble_init(nus_data_handler);
+	simple_ble_init();
 
     // Start execution.
     NRF_LOG_INFO("BLE Template Init.");
